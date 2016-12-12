@@ -97,7 +97,7 @@
   var NexT = window.NexT || {};
   var CONFIG = {
     scheme: 'Muse',
-    sidebar: {"position":"left","display":"post"},
+    sidebar: {"position":"right","display":"post"},
     fancybox: true,
     motion: true,
     duoshuo: {
@@ -134,7 +134,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left 
+  <div class="container one-collumn sidebar-position-right 
    page-home 
  ">
     <div class="headband"></div>
@@ -269,6 +269,13 @@
 
           
             
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/12/12/机器学习总结-模型评估与验证/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/12/机器学习总结-模型评估与验证/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
           
 
           
@@ -298,8 +305,7 @@
 
       
         
-          
-            <h1 id="机器学习总结-模型评估与验证"><a href="#机器学习总结-模型评估与验证" class="headerlink" title="机器学习总结-模型评估与验证"></a>机器学习总结-模型评估与验证</h1><h3 id="篇首语"><a href="#篇首语" class="headerlink" title="篇首语"></a>篇首语</h3><p>从Udacity的MLND开始，学机器学习差不多5个月了，期间各种迷茫无知所措，所幸一直坚持了下来。 Udacity的项目并不难，从P1到P4都有一个个问题帮助理解，很多步骤都帮你写好了，部署算法只需要调用sklearn，很少需要从公式推导角度理解算法，这样可以帮初学者入门但是对更深层次的算法认识不够。写这个系列文章初衷在于 一是可以回顾总结知识点，搭建整个机器学习框架；二是推导相应算法公式，更深层次理解算法。写作形式以问答为导向，知识点总结为基础。</p>
+          <h1 id="机器学习总结-模型评估与验证"><a href="#机器学习总结-模型评估与验证" class="headerlink" title="机器学习总结-模型评估与验证"></a>机器学习总结-模型评估与验证</h1><h3 id="篇首语"><a href="#篇首语" class="headerlink" title="篇首语"></a>篇首语</h3><p>从Udacity的MLND开始，学机器学习差不多5个月了，期间各种迷茫无知所措，所幸一直坚持了下来。 Udacity的项目并不难，从P1到P4都有一个个问题帮助理解，很多步骤都帮你写好了，部署算法只需要调用sklearn，很少需要从公式推导角度理解算法，这样可以帮初学者入门但是对更深层次的算法认识不够。写这个系列文章初衷在于 一是可以回顾总结知识点，搭建整个机器学习框架；二是推导相应算法公式，更深层次理解算法。写作形式以问答为导向，知识点总结为基础。</p>
 <p>下面是5个项目和对应的知识点</p>
 <ul>
 <li>模型评估与验证Model Evaluation and Validation </li>
@@ -308,198 +314,11 @@
 <li>增强学习Reinforcement Learning</li>
 <li>深度学习Deep Learning</li>
 </ul>
-<h3 id="本篇大纲"><a href="#本篇大纲" class="headerlink" title="本篇大纲"></a>本篇大纲</h3><p>本篇旨在回答以下问题：</p>
-<ul>
-<li>有哪些验证模型的metrics（准则？）</li>
-</ul>
-<ul>
-<li>这些Metric的优缺点和适用范围有哪些？</li>
-<li>什么是Bias（偏差）和Variance（方差）</li>
-</ul>
-<ul>
-<li>偏差和方差对误差Error的影响分别是什么？</li>
-<li>如何降低模型预测误差Error？</li>
-<li>Learning Curve表示什么，它的作用是什么？</li>
-</ul>
-<ul>
-<li>为什么需要shuffle和split data？</li>
-<li>什么是grid search？如何实施？</li>
-<li>什么是Cross Validation？对grid search好处是什么？如何实施？</li>
-</ul>
-<p>涉及到的知识点：</p>
-<ul>
-<li>Evaluatioin Metrics<ul>
-<li>Metrics for Classification</li>
-<li>Metrics for Regression</li>
-</ul>
-</li>
-<li>Managing Error And Complexity<ul>
-<li>Causes of Error</li>
-<li>Learning Curve</li>
-<li>Cross Validation and Grid Search</li>
-</ul>
-</li>
-</ul>
-<h3 id="Evaluatioin-Metrics"><a href="#Evaluatioin-Metrics" class="headerlink" title="Evaluatioin Metrics"></a>Evaluatioin Metrics</h3><p>监督学习可分为两类，Classification分类和Regression回归问题，相对应有不同的模型评判标准</p>
-<h5 id="Classification分类："><a href="#Classification分类：" class="headerlink" title="Classification分类："></a>Classification分类：</h5><ul>
-<li>Accuracy准确率</li>
-<li>Precision精确率</li>
-<li>Recall召回率</li>
-<li>F1 score</li>
-</ul>
-<h5 id="Regression回归："><a href="#Regression回归：" class="headerlink" title="Regression回归："></a>Regression回归：</h5><ul>
-<li>Mean Absolute Error平均绝对偏差</li>
-<li>Mean Squared Error均方误差</li>
-<li>R^2^ score</li>
-<li>Explained Variance Score</li>
-</ul>
-<h4 id="分类问题Metric的优缺点和适用范围"><a href="#分类问题Metric的优缺点和适用范围" class="headerlink" title="分类问题Metric的优缺点和适用范围"></a>分类问题Metric的优缺点和适用范围</h4><p>首先说分类问题会出现的4种情况</p>
-<p>　    1）True positive (TP):  将正类预测为正类，真阳</p>
-<p>　　2）False positive (FP): 将负类预测为正类，伪阳</p>
-<p>　　3）False negative (FN):将正类预测为负类，伪阴</p>
-<p>　　4）True negative (TN): 将负类预测为负类，真f阴</p>
-<p>这4种情况可用下图表示：</p>
-<p><img src="http://ww2.sinaimg.cn/large/006tNbRwgw1famls52vroj308n05zdg5.jpg" alt="WikipediaContingency"></p>
-<p>即True或者False代表与真实数据符合情况，Positive和Negative代表预测情况</p>
-<h5 id="Accuracy准确率"><a href="#Accuracy准确率" class="headerlink" title="Accuracy准确率"></a>Accuracy准确率</h5><p><strong>定义</strong></p>
-<p>顾名思义，准确率的定义是对于给定的测试数据集，分类器正确分类的样本数与总样本数之比。即：</p>
-<p>$$ A(M) = \frac{TN + TP}{TN + FP + FN + TP}$$</p>
-<p> <strong>Accuracy Paradox</strong></p>
-<p>Accuracy优点很明显，那就是简单直观，但是accuracy有时会陷入Accuracy paradox中。即准确率越高并不代表模型越好。</p>
-<p>假设某家保险公司需要一个风险评估模型。 这个模型需要检验每个案例是否可能有高风险，当有高风险时，公司会介入调查。现在有一个验证数据集包含10000个案例供检验风险评估模型。这个数据集中有9850个低风险案例（不需要介入调查）和150个高风险案例（需要介入调查）。</p>
-<p>现在有两个模型，下面是模型1的检验结果：</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Predicted Negative</th>
-<th>Predicted Positive</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Negative Cases</strong></td>
-<td>9,700</td>
-<td>150</td>
-</tr>
-<tr>
-<td><strong>Positive Cases</strong></td>
-<td>50</td>
-<td>100</td>
-</tr>
-</tbody>
-</table>
-<p>通过表格，模型1的的准确率为：</p>
-<p>$$A(M_1) = \frac{9700 + 100}{9700 + 150 + 50 + 100} = 98.0\%$$</p>
-<p>准确率达到了98%，看起来模型1还很不错。但是由于数据集中本来高风险的案例就很少，如果在模型2中我们将所有案例都预测为低风险，准确率可以达到98.5%，比模型1还要高：</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Predicted Negative</th>
-<th>Predicted Positive</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Negative Cases</strong></td>
-<td>9,850</td>
-<td>0</td>
-</tr>
-<tr>
-<td><strong>Positive Cases</strong></td>
-<td>150</td>
-<td>0</td>
-</tr>
-</tbody>
-</table>
-<p>$$A(M_2) = \frac{9850 + 0} {9850 + 150 + 0 + 0} = 98.5\%$$</p>
-<p>显然模型2并不能帮助保险公司减少保险欺诈的风险。</p>
-<h5 id="Precision精确率"><a href="#Precision精确率" class="headerlink" title="Precision精确率"></a>Precision精确率</h5><p><strong>定义</strong></p>
-<p>精确率计算的是所有”正确被检索的item”占所有”实际被检索到的”的比例. 即：</p>
-<p>$$P(M) = \frac{TP}{TP+FP}$$</p>
-<p><strong>例子</strong></p>
-<p>在上面保险公司的例子中，模型1的精确率为</p>
-<p>$$P(M_1) = \frac{100}{100 + 150} = 40\%$$</p>
-<p>而模型2的精确率就为0了：</p>
-<p>$$P(M_2) = \frac{0}{0+0} = 0\%$$</p>
-<h5 id="Recall-召回率"><a href="#Recall-召回率" class="headerlink" title="Recall 召回率"></a>Recall 召回率</h5><p>召回率计算的是所有”正确被检索的item”占所有”应该检索到的item”的比例。即：</p>
-<p>$$R(M) = \frac{TP}{TP+FN}$$</p>
-<p>在上面保险公司的例子中，模型1的召回率为</p>
-<p>$$R(M_1) = \frac{100}{100 + 50}= 66.7\%$$</p>
-<h5 id="F1-score"><a href="#F1-score" class="headerlink" title="F1 score"></a>F1 score</h5><p>F1 值是精确率和召回率的调和均值，定义为：</p>
-<p>$$\frac{2}{F1} = \frac{1}{P} + \frac{1}{R}$$</p>
-<p>即：</p>
-<p>$$F1 = \frac{2TP}{2TP + FP + FN}$$</p>
-<h5 id="适用场景"><a href="#适用场景" class="headerlink" title="适用场景"></a>适用场景</h5><p>准确率和召回率是互相影响的，理想情况下肯定是做到两者都高，但是一般情况下准确率高、召回率就低，召回率低、准确率高，当然如果两者都低，那是什么地方出问题了。当精确率和召回率都高时，F1的值也会高。在两者都要求高的情况下，可以用F1来衡量。</p>
-<p><img src="http://ww3.sinaimg.cn/large/006tNbRwgw1famls4d8abj30k80f60up.jpg" alt="instance-matching-30-728"></p>
-<p>下面是两个场景：</p>
-<ol>
-<li>地震的预测<br>对于地震的预测，我们希望的是RECALL非常高，也就是说每次地震我们都希望预测出来。这个时候我们可以牺牲PRECISION。情愿发出1000次警报，把10次地震都预测正确了；也不要预测100次对了8次漏了两次。</li>
-<li>嫌疑人定罪<br>基于不错怪一个好人的原则，对于嫌疑人的定罪我们希望是非常准确的。及时有时候放过了一些罪犯（recall低），但也是值得的。</li>
-</ol>
-<p>除了以上几个值之外，还有ROC和AUC等评判指标，具体以后再做总结</p>
-<h4 id="回归问题Metric的优缺点和适用范围"><a href="#回归问题Metric的优缺点和适用范围" class="headerlink" title="回归问题Metric的优缺点和适用范围"></a>回归问题Metric的优缺点和适用范围</h4><h5 id="Mean-Absolute-Error-MAE"><a href="#Mean-Absolute-Error-MAE" class="headerlink" title="Mean Absolute Error(MAE)"></a>Mean Absolute Error(MAE)</h5><p>MAE用来描述预测值和真实值的差值。数值越小越好。</p>
-<p>假设$y_i$是真实值，$f_i$ 是相对应的预测值，则$n$ 个样本的MAE可由下式出给：</p>
-<p>$$MAE = \frac{1}{n} \sum_{i=1}^{n}|f_i-y_i|$$</p>
-<h5 id="Mean-Squared-Error-MSE"><a href="#Mean-Squared-Error-MSE" class="headerlink" title="Mean Squared Error(MSE)"></a>Mean Squared Error(MSE)</h5><p>Mean Squared Error也称为Mean Squared Deviation(MSD)，计算的是预测值和实际值的平方误差。同样，数值越小越好。</p>
-<p>假设$y_i$是真实值，$f_i$ 是相对应的预测值，则$n$ 个样本的MSE由下式公式给出：</p>
-<p>$$MSE = \frac{1}{n} \sum_{i=1}^{n}(f_i - y_i)^2$$</p>
-<h6 id="MSE与Bias和Variance的关联"><a href="#MSE与Bias和Variance的关联" class="headerlink" title="MSE与Bias和Variance的关联"></a>MSE与Bias和Variance的关联</h6><p>$${\displaystyle \operatorname {MSE} ({\hat {\theta }})=\mathbb {E} \left[({\hat {\theta }}-\theta )^{2}\right].}$$</p>
-<p>$${\displaystyle \operatorname {MSE} ({\hat {\theta }})=\operatorname {Var} ({\hat {\theta }})+\operatorname {Bias} ({\hat {\theta }},\theta )^{2}.}$$</p>
-<h5 id="Explained-Variance-Score"><a href="#Explained-Variance-Score" class="headerlink" title="Explained Variance Score"></a>Explained Variance Score</h5><p>假设$y$是真实值，$f$ 是相对应的预测值，$Var$是方差，Explained Variance由下式公式给出</p>
-<p>$$Explained\ Variance = 1 - \frac{Var(y - f)}{Var(y)}$$</p>
-<p>值最大为1，越接近1越好。</p>
-<p><em>注：点<a href="https://assessingpsyche.wordpress.com/2014/07/10/two-visualizations-for-explaining-variance-explained/" target="_blank" rel="external">这里</a>查看什么是“Variance Explained”</em></p>
-<h5 id="R-2-Score"><a href="#R-2-Score" class="headerlink" title="R^2^ Score"></a>R^2^ Score</h5><p>R^2^ Score又称为the coefficient of determination。判断的是预测模型和真实数据的拟合程度，最佳值为1，同时可为负值。</p>
-<p>假设$y_i$是真实值，$f_i$ 是相对应的预测值，则$n$ 个样本的R^2^ score由下式公式给出：</p>
-<p>$$R^2 = 1 - \frac{\sum_{i=1}^{n}(y_i - f<em>i)^2}{\sum</em>{i=1}^{n}(y_i - \overline{y})^2}$$</p>
-<p>其中$\overline{y}$ 是$y$ 的均值，即$\overline{y} = \frac{1}{n}\sum_{i=1}^{n} y_i$</p>
-<h3 id="Causes-of-Error"><a href="#Causes-of-Error" class="headerlink" title="Causes of Error"></a>Causes of Error</h3><blockquote>
-<p>此处部分引用知乎上@Jason Gu和@优达学城(Udacity)的答案</p>
-</blockquote>
-<h4 id="Bias（偏差）和Variance（方差）"><a href="#Bias（偏差）和Variance（方差）" class="headerlink" title="Bias（偏差）和Variance（方差）"></a>Bias（偏差）和Variance（方差）</h4><p><strong>偏差Bias：</strong>描述的是预测值（估计值）的期望与真实值之间的偏离程度。偏差越大，越偏离真实数据，如下图第二行所示。</p>
-<p><strong>方差Variance：</strong>描述的是预测值的变化范围，离散程度，也就是离其期望值的距离。方差越大，数据的分布越分散,如下图右列所示。</p>
-<p><img src="http://ww1.sinaimg.cn/large/006tNbRwgw1famls3fp75j30go0frq4k.jpg" alt="bias"></p>
-<h4 id="偏差和方差对误差Error的影响"><a href="#偏差和方差对误差Error的影响" class="headerlink" title="偏差和方差对误差Error的影响"></a>偏差和方差对误差Error的影响</h4><p>首先模型的泛化误差可以表示为</p>
-<p><strong>Error = Bias + Variance + Noise</strong></p>
-<p>其中，Noise（噪声）是数据本身的问题，比如不准确的客户资料，在此不进行讨论。</p>
-<h5 id="偏差（bias）造成的误差-准确率和欠拟合"><a href="#偏差（bias）造成的误差-准确率和欠拟合" class="headerlink" title="偏差（bias）造成的误差 - 准确率和欠拟合"></a>偏差（bias）造成的误差 - 准确率和欠拟合</h5><p>如果模型具有足够的数据，但因不够复杂而无法捕捉基本关系，即如果模型不适当，则会出现偏差。这样一来，模型一直会系统地错误表示数据，从而导致预测准确率降低。出现欠拟合（underfitting）。</p>
-<h5 id="方差（variance）造成的误差-精准度和过拟合"><a href="#方差（variance）造成的误差-精准度和过拟合" class="headerlink" title="方差（variance）造成的误差 - 精准度和过拟合"></a>方差（variance）造成的误差 - 精准度和过拟合</h5><p>方差就是指模型过于贴近训练数据，以至于没办法把它的结果泛化（generalize）。而泛化是正事机器学习要解决的问题，如果一个模型只能对一组特定的数据有效，换了数据就无效了，我们就说这个模型过拟合。</p>
-<p>用一张图表示为</p>
-<p><img src="http://ww4.sinaimg.cn/large/006tNbRwgw1famls0tx1tj30do08lq3c.jpg" alt="biasvariance"></p>
-<h4 id="维度灾难Curse-of-Dimensionality"><a href="#维度灾难Curse-of-Dimensionality" class="headerlink" title="维度灾难Curse of Dimensionality"></a>维度灾难Curse of Dimensionality</h4><p>当维数提高时，模型空间的体积提高太快，因而可用数据变得很稀疏。在高维空间中，所有的数据都很稀疏，从很多角度看都不相似，因而平常使用的数据组织策略变得极其低效。为了获得在统计学上正确并且有可靠的结果，用来支撑这一结果所需要的数据量通常随着维数的提高而呈指数级增长。</p>
-<p><img src="http://ww4.sinaimg.cn/large/006tNbRwgw1famluqsm0gj30m80atmy6.jpg" alt="dimensionality-800"></p>
-<p><em>注：<a href="http://www.visiondummy.com/2014/04/curse-dimensionality-affect-classification/" target="_blank" rel="external">这里</a>有篇很好的文章完整解释了维度灾难</em></p>
-<h5 id="如何避免维度灾难"><a href="#如何避免维度灾难" class="headerlink" title="如何避免维度灾难"></a>如何避免维度灾难</h5><p>实际上并没有一种固定的方法避免维度灾难，解决方法需要结合数据集和所选的模型。训练数据集越小，则用到的特征（feature）应当越少。</p>
-<p>另外，对于诸如神经网络，kNN，决策树等泛化不好容易过拟合的分类器，维度应当适当的减少。而对于朴素贝叶斯和线性分类器等不太复杂的分类器，特征可以适当的增大。</p>
-<p><img src="http://ww1.sinaimg.cn/large/006tNbRwgw1famls310gkj30e609274u.jpg" alt="dimensionality_vs_performance"></p>
-<h4 id="学习曲线Learning-Curve"><a href="#学习曲线Learning-Curve" class="headerlink" title="学习曲线Learning Curve"></a>学习曲线Learning Curve</h4><p>Learning Curve就是预测模型在训练集和测试集表现的可视化曲线。</p>
-<p>用scikit-learn的一个例子来解释：</p>
-<p><img src="http://ww3.sinaimg.cn/large/006tNbRwgw1famls1zhruj30nv0ekabz.jpg" alt="learningcurve"></p>
-<p>很明显图右上角的模型效果最好，训练集和测试集都有很好的分数，并且收敛在一起。而右下的模型过拟合了。</p>
-<h4 id="K折-交叉验证-K-fold-Cross-Validation"><a href="#K折-交叉验证-K-fold-Cross-Validation" class="headerlink" title="K折-交叉验证 K-fold Cross Validation"></a>K折-交叉验证 K-fold Cross Validation</h4><p>初始采样分割成K个子样本，一个单独的子样本被保留作为验证模型的数据，其他K-1个样本用来训练。交叉验证重复K次，每个子样本验证一次，平均K次的结果或者使用其它结合方式，最终得到一个单一估测。这个方法的优势在于，同时重复运用随机产生的子样本进行训练和验证，每次的结果验证一次。方差Variance随着k的增大而减小。</p>
-<p><img src="http://ww3.sinaimg.cn/large/006tNbRwgw1famlshx2pyj30rs08et9t.jpg" alt="cvalidation"></p>
-<h4 id="网格搜索Grid-Search"><a href="#网格搜索Grid-Search" class="headerlink" title="网格搜索Grid Search"></a>网格搜索Grid Search</h4><p>预测模型有很多Hyper-parameters，如何知道超参数的哪些组合可以达到更好的效果呢？scikit learn提供了网格搜索的算法。只需要设定需要调整的参数和参数的范围，算法会自动验证每一种参数组合的验证效果。</p>
-<p><img src="http://ww1.sinaimg.cn/large/006tNbRwgw1famm2hn7tlj30m80go0un.jpg" alt="grid search"></p>
-<p>对SVM的C参数和gamma的网格搜索可视化结果如上图所示，可知{C=1.0，gamma = 0.1}时效果最好。</p>
-<h3 id="References："><a href="#References：" class="headerlink" title="References："></a>References：</h3><ol>
-<li>李航 《统计学习方法》</li>
-<li>周志华 《机器学习》</li>
-<li><a href="https://argcv.com/articles/1036.c" target="_blank" rel="external">准确率(Accuracy), 精确率(Precision), 召回率(Recall)和F1-Measure</a></li>
-<li><a href="https://en.wikipedia.org/wiki/Accuracy_paradox" target="_blank" rel="external">Accuracy paradox</a></li>
-<li><a href="http://bbs.ziyoujie.com:9000/view/16" target="_blank" rel="external">精确率、召回率、F1 值、ROC、AUC 各自的优缺点是什么？</a></li>
-<li><a href="https://en.wikipedia.org/wiki/Mean_absolute_error" target="_blank" rel="external">Mean absolute error</a></li>
-<li><a href="https://assessingpsyche.wordpress.com/2014/07/10/two-visualizations-for-explaining-variance-explained/" target="_blank" rel="external">Two visualizations for explaining “variance explained”</a></li>
-<li><a href="https://www.zhihu.com/question/20448464" target="_blank" rel="external">偏差和方差有什么区别？</a></li>
-<li><a href="http://scott.fortmann-roe.com/docs/BiasVariance.html" target="_blank" rel="external">Understanding the Bias-Variance Tradeoff</a></li>
-<li><a href="https://www.zhihu.com/question/27068705" target="_blank" rel="external">机器学习中的Bias(偏差)，Error(误差)，和Variance(方差)有什么区别和联系？</a></li>
-<li><a href="https://zh.wikipedia.org/wiki/%E7%BB%B4%E6%95%B0%E7%81%BE%E9%9A%BE" target="_blank" rel="external">维数灾难</a></li>
-<li><a href="http://www.visiondummy.com/2014/04/curse-dimensionality-affect-classification/" target="_blank" rel="external">The Curse of Dimensionality in classification</a></li>
-<li><a href="https://zh.wikipedia.org/wiki/%E4%BA%A4%E5%8F%89%E9%A9%97%E8%AD%89" target="_blank" rel="external">交叉驗證</a></li>
-</ol>
-
-          
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/12/12/机器学习总结-模型评估与验证/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
         
       
     </div>
@@ -581,6 +400,26 @@
         
 
         <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/RyannnG" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/thecolorofdreams" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
           
         </div>
 
@@ -698,9 +537,30 @@
 
   
 
+  
+    
+  
 
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"iissnan-notes"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
 
   
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
 
 
 

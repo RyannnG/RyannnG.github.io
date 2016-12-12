@@ -99,7 +99,7 @@
 <meta property="og:image" content="http://ww3.sinaimg.cn/large/006tNbRwgw1famls1zhruj30nv0ekabz.jpg">
 <meta property="og:image" content="http://ww3.sinaimg.cn/large/006tNbRwgw1famlshx2pyj30rs08et9t.jpg">
 <meta property="og:image" content="http://ww1.sinaimg.cn/large/006tNbRwgw1famm2hn7tlj30m80go0un.jpg">
-<meta property="og:updated_time" content="2016-12-12T00:22:38.000Z">
+<meta property="og:updated_time" content="2016-12-12T04:59:43.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="机器学习总结-模型评估与验证">
 <meta name="twitter:description" content="机器学习总结-模型评估与验证篇首语从Udacity的MLND开始，学机器学习差不多5个月了，期间各种迷茫无知所措，所幸一直坚持了下来。 Udacity的项目并不难，从P1到P4都有一个个问题帮助理解，很多步骤都帮你写好了，部署算法只需要调用sklearn，很少需要从公式推导角度理解算法，这样可以帮初学者入门但是对更深层次的算法认识不够。写这个系列文章初衷在于 一是可以回顾总结知识点，搭建整个机器学">
@@ -111,7 +111,7 @@
   var NexT = window.NexT || {};
   var CONFIG = {
     scheme: 'Muse',
-    sidebar: {"position":"left","display":"post"},
+    sidebar: {"position":"right","display":"post"},
     fancybox: true,
     motion: true,
     duoshuo: {
@@ -148,7 +148,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left page-post-detail ">
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
@@ -278,6 +278,13 @@
 
           
             
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/12/12/机器学习总结-模型评估与验证/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/12/机器学习总结-模型评估与验证/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
           
 
           
@@ -315,20 +322,15 @@
 <li>增强学习Reinforcement Learning</li>
 <li>深度学习Deep Learning</li>
 </ul>
+<a id="more"></a>
 <h3 id="本篇大纲"><a href="#本篇大纲" class="headerlink" title="本篇大纲"></a>本篇大纲</h3><p>本篇旨在回答以下问题：</p>
 <ul>
 <li>有哪些验证模型的metrics（准则？）</li>
-</ul>
-<ul>
 <li>这些Metric的优缺点和适用范围有哪些？</li>
 <li>什么是Bias（偏差）和Variance（方差）</li>
-</ul>
-<ul>
 <li>偏差和方差对误差Error的影响分别是什么？</li>
 <li>如何降低模型预测误差Error？</li>
 <li>Learning Curve表示什么，它的作用是什么？</li>
-</ul>
-<ul>
 <li>为什么需要shuffle和split data？</li>
 <li>什么是grid search？如何实施？</li>
 <li>什么是Cross Validation？对grid search好处是什么？如何实施？</li>
@@ -548,6 +550,10 @@
           
   <div class="comments" id="comments">
     
+      <div class="ds-thread" data-thread-key="2016/12/12/机器学习总结-模型评估与验证/"
+           data-title="机器学习总结-模型评估与验证" data-url="http://yoursite.com/2016/12/12/机器学习总结-模型评估与验证/">
+      </div>
+    
   </div>
 
 
@@ -604,6 +610,26 @@
         
 
         <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/RyannnG" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/thecolorofdreams" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
           
         </div>
 
@@ -736,9 +762,30 @@
 
   
 
+  
+    
+  
 
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"iissnan-notes"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
 
   
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
 
 
 
