@@ -1557,7 +1557,7 @@ pre .javascript .function {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #49998e;
+  background: #6a086c;
 }
 .links-of-blogroll {
   font-size: 13px;
@@ -2127,7 +2127,7 @@ a.search-result {
   overflow: hidden;
 }
 .header {
-  background: url("/images/mountain.png");
+  background: url("/images/mountain.jpg");
   background-repeat: no-repeat;
 }
 @media (max-width: 767px) {
