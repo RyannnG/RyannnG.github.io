@@ -1,0 +1,940 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="机器学习,SVM," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="导语做MLND项目时一直没有搞懂如何选择SVM参数，因此监督学习总结第一篇献给SVM，希望能带领大家稍稍深入理解SVM
+本篇主要解决一下问题：
+
+SVM有哪几类？各自解决的问题是什么？
+什么是支持向量？
+如何确定最大间隔超平面？
+如何应对线性不可分的情况？
+什么是核（kernel）？
+有哪些核kernel？优缺点和使用条件是什么？
+有哪些超参数？调节各个超参数的作用是什么？
+为什么说SVM适合高维">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MLND回顾-监督学习(1) 支持向量机">
+<meta property="og:url" content="http://yoursite.com/2016/12/13/MLND回顾-监督学习(1）支持向量机/index.html">
+<meta property="og:site_name" content="RyannnG‘s Blog">
+<meta property="og:description" content="导语做MLND项目时一直没有搞懂如何选择SVM参数，因此监督学习总结第一篇献给SVM，希望能带领大家稍稍深入理解SVM
+本篇主要解决一下问题：
+
+SVM有哪几类？各自解决的问题是什么？
+什么是支持向量？
+如何确定最大间隔超平面？
+如何应对线性不可分的情况？
+什么是核（kernel）？
+有哪些核kernel？优缺点和使用条件是什么？
+有哪些超参数？调节各个超参数的作用是什么？
+为什么说SVM适合高维">
+<meta property="og:image" content="http://ww3.sinaimg.cn/large/006tNbRwgw1fao97g7iuaj30qo0fjabq.jpg">
+<meta property="og:image" content="https://kgpdag.files.wordpress.com/2015/08/11846223_1042104855814814_1146300225_n.jpg">
+<meta property="og:image" content="http://dni-institute.in/blogs/wp-content/uploads/2015/09/SVM-Planes.png">
+<meta property="og:image" content="http://images.slideplayer.com/26/8338789/slides/slide_7.jpg">
+<meta property="og:image" content="http://image.slidesharecdn.com/eventclassificationpredictionusingsupportvectormachine-160405104743/95/event-classification-prediction-using-support-vector-machine-15-638.jpg?cb=1459853447">
+<meta property="og:image" content="http://yaroslavvb.com/upload/save/so-libsvm.png">
+<meta property="og:image" content="https://sebastianraschka.com/images/blog/2014/kernel_pca/linear_vs_nonlinear.png">
+<meta property="og:image" content="http://ww3.sinaimg.cn/large/006tNbRwgw1fao98zu82dj30jy0c80uk.jpg">
+<meta property="og:image" content="http://ww3.sinaimg.cn/large/006tNbRwgw1faoubck6z7j30v20htmzp.jpg">
+<meta property="og:image" content="http://images.slideplayer.com/24/7016025/slides/slide_61.jpg">
+<meta property="og:image" content="https://i.stack.imgur.com/jCUj2.png">
+<meta property="og:updated_time" content="2016-12-17T00:48:34.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MLND回顾-监督学习(1) 支持向量机">
+<meta name="twitter:description" content="导语做MLND项目时一直没有搞懂如何选择SVM参数，因此监督学习总结第一篇献给SVM，希望能带领大家稍稍深入理解SVM
+本篇主要解决一下问题：
+
+SVM有哪几类？各自解决的问题是什么？
+什么是支持向量？
+如何确定最大间隔超平面？
+如何应对线性不可分的情况？
+什么是核（kernel）？
+有哪些核kernel？优缺点和使用条件是什么？
+有哪些超参数？调节各个超参数的作用是什么？
+为什么说SVM适合高维">
+<meta name="twitter:image" content="http://ww3.sinaimg.cn/large/006tNbRwgw1fao97g7iuaj30qo0fjabq.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/12/13/MLND回顾-监督学习(1）支持向量机/"/>
+
+
+  <title> MLND回顾-监督学习(1) 支持向量机 | RyannnG‘s Blog </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?9ce3d6f1a43cd6ef9f9eddadd0c72220";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">RyannnG‘s Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                MLND回顾-监督学习(1) 支持向量机
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-12-13T09:03:19+08:00" content="2016-12-13">
+              2016-12-13
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/12/13/MLND回顾-监督学习(1）支持向量机/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/13/MLND回顾-监督学习(1）支持向量机/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/12/13/MLND回顾-监督学习(1）支持向量机/" class="leancloud_visitors" data-flag-title="MLND回顾-监督学习(1) 支持向量机">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="导语"><a href="#导语" class="headerlink" title="导语"></a>导语</h3><p>做MLND项目时一直没有搞懂如何选择SVM参数，因此监督学习总结第一篇献给SVM，希望能带领大家稍稍深入理解SVM</p>
+<p>本篇主要解决一下问题：</p>
+<ul>
+<li>SVM有哪几类？各自解决的问题是什么？</li>
+<li>什么是支持向量？</li>
+<li>如何确定最大间隔超平面？</li>
+<li>如何应对线性不可分的情况？</li>
+<li>什么是核（kernel）？</li>
+<li>有哪些核kernel？优缺点和使用条件是什么？</li>
+<li>有哪些超参数？调节各个超参数的作用是什么？</li>
+<li>为什么说SVM适合高维数据？</li>
+</ul>
+<a id="more"></a>
+<h3 id="线性可分SVM"><a href="#线性可分SVM" class="headerlink" title="线性可分SVM"></a>线性可分SVM</h3><p>SVM其实是一个包含了很多个监督算法的集合，用于解决分类问题，回归问题和孤立点检测（outlier detection）。</p>
+<p>SVM最基础的模型是线性可分支持向量机，用于训练集线性可分情况下的二类分类。核心思路是，尝试寻找一条远离所有分类的线，这条线被称为<strong>最大间隔超平面(maximum-margin hyperplane)</strong>，如下图所示</p>
+<p><img src="http://ww3.sinaimg.cn/large/006tNbRwgw1fao97g7iuaj30qo0fjabq.jpg" alt="slide_4"></p>
+<h3 id="分隔超平面Hyperplane"><a href="#分隔超平面Hyperplane" class="headerlink" title="分隔超平面Hyperplane"></a>分隔超平面Hyperplane</h3><p><img src="https://kgpdag.files.wordpress.com/2015/08/11846223_1042104855814814_1146300225_n.jpg" alt="Alt text"></p>
+<p>上图中将数据分隔开来的直线或面就是分隔超平面(separating hyperplane)。分隔超平面也就是决策边界。在二维数据点上分隔超平面就是一条线，3维中分隔超平面就是一个平面。依次类推，分隔超平面的维数总是比数据集的维度少一维。</p>
+<p>对于二类线性可分的数据集，分隔线可以有无数种画法，但是哪一条是最好的？在此我们定义数据点到超平面的距离为间隔(margin)。并且我们希望在离超平面最近的点(即支持向量)之间的间隔最大。也就是说，间隔最大化的意义在于，不仅将正负实例点分开，而且对最难分类的实例点(离超平面最近的点)也要有足够的确信度将它们分开。</p>
+<h4 id="支持向量Support-Vector"><a href="#支持向量Support-Vector" class="headerlink" title="支持向量Support Vector"></a>支持向量Support Vector</h4><p>线性可分情况下，训练集的样本点与分割超平面距离最近的点称为支持向量（support vector）。</p>
+<p>在决定超平面时只有支持向量起作用，而其他实例点不起作用。正是由于支持向量在确定分离超平面中起着决定作用，所以将这种分类模型称为支持向量机。</p>
+<p><img src="http://dni-institute.in/blogs/wp-content/uploads/2015/09/SVM-Planes.png" alt="Alt text"></p>
+<h3 id="最大间隔"><a href="#最大间隔" class="headerlink" title="最大间隔"></a>最大间隔</h3><p>在二类分隔问题中，我们用$y=+1$ 表示正类，$y=-1$表示负类。即对所有的样本点$(x_i,y_i)$ ,$y_i\in {-1,1}$ 。分隔超平面的形式写为$w^Tx + b$ ，其中$w$ 是向量，$b$ 是截距。</p>
+<p>于是线性分类器可写为：</p>
+<p>$f(x) = sign(w^T + b)$</p>
+<p>我们的目标是找出分类器定义中的$w$和$b$ ，为此，我们首先需要找到具有最小间隔的数据点，即支持向量。一旦找到支持向量，我们就需要让间隔最大化</p>
+<p>但是我们如何表示样本点与超平面的间隔？这就引出了函数间隔和几何间隔的问题</p>
+<h4 id="函数间隔functional-margin"><a href="#函数间隔functional-margin" class="headerlink" title="函数间隔functional margin"></a>函数间隔functional margin</h4><p>对于给定训练集和超平面$(w,b)$ ,定义超平面和样本点$(x_i, y_i)$的函数间隔为</p>
+<p>$\hat{\gamma_i} = y_i(w^Tx_i + b)$</p>
+<p>同时定义所有样本点函数间隔的最小值为</p>
+<p>$\hat{\gamma} = min\ \hat{\gamma_i}, i=1,\dots N$</p>
+<p>这时我们发现成比例改变$w$和$b$ 时，例如改为$2w$和$2b$时，超平面没有改变，但是函数间隔却成了原来的2倍。</p>
+<p>如果需要让间隔保持确定，我们可以对$w$加一些约束，使其规范化，这就是几何间隔</p>
+<h4 id="几何间隔geometric-margin"><a href="#几何间隔geometric-margin" class="headerlink" title="几何间隔geometric margin"></a>几何间隔geometric margin</h4><p>对于给定训练集和超平面$(w,b)$ ,定义超平面和样本点$(x_i, y_i)$的几何间隔为</p>
+<p>$\hat{\gamma_i} = y_i(\frac{w^Tx_i + b}{||w||})$</p>
+<p>同时定义所有样本点函数间隔的最小值为</p>
+<p>$\hat{\gamma} = min\ \hat{\gamma_i}, i=1,\dots N$</p>
+<p>几何间隔即点到分隔超平面的距离，当点$(x_i,y_i)$为正类时，类标记$y_i=+1$ 。几何间隔为</p>
+<p>$\hat{\gamma_i} = \frac{w^Tx_i + b}{||w||} $</p>
+<p>如果点在超平面负的一侧，则点到超平面的距离为</p>
+<p>$\hat{\gamma_i} =- \frac{w^Tx_i + b}{||w||} $ </p>
+<p>如果$||w||=1$，那么函数间隔和几何间隔相等</p>
+<p><img src="http://images.slideplayer.com/26/8338789/slides/slide_7.jpg" alt="Alt text"></p>
+<h4 id="间隔最大化"><a href="#间隔最大化" class="headerlink" title="间隔最大化"></a>间隔最大化</h4><p>于是我们的问题细化为求一个几何间隔最大的超平面问题。</p>
+<p>​   max $\gamma$</p>
+<p>​   s.t.  <script type="math/tex">y_i(\frac{w^Tx_i + b}{||w||}) \ge \gamma,\ i=1,2\dots ,N</script></p>
+<p>即对于超平面$(w,b)$最大化几何间隔$\gamma$ ，同时每个样本点对超平面的距离都大于等于$\gamma$ 。s.t 是subject to的缩写，表示约束条件。</p>
+<p>将其改写为函数间隔$\hat{\gamma}$</p>
+<p>​   max <script type="math/tex">\frac{\hat{\gamma}}{||w||}</script></p>
+<p>​   s.t.  <script type="math/tex">y_i(w^Tx_i + b) \ge \hat{\gamma},\ i=1,2\dots ,N</script></p>
+<p>由于规范项的存在，函数间隔的取值并不影响最优化问题的解，为了计算方便，我们可以让函数间隔取$\hat{\gamma} = 1$ 。并且最大化$\frac{1}{||w||}$与最小化$\frac{1}{2}||w||^2$ 是等价的。</p>
+<p>最终间隔最大化问题转换为：</p>
+<p>​   最小化 $\frac{1}{2}||w||^2$ ，并且</p>
+<p>​   对于所有$(x_i,y_i)$, <script type="math/tex">y_i(w^Tx_i + b) \ge 1</script></p>
+<h4 id="对偶问题优化"><a href="#对偶问题优化" class="headerlink" title="对偶问题优化"></a>对偶问题优化</h4><p>上述的优化问题是一个带约束的条件的优化问题。对于此类优化问题，有一个非常著名的求解方法，即<a href="https://en.wikipedia.org/wiki/Lagrange_multiplier" target="_blank" rel="external">拉格朗日乘子法Lagrangian Multipilier</a> 。</p>
+<p>对此，对每一个不等式约束我们可以构建拉格朗日函数为：</p>
+<script type="math/tex; mode=display">L(w,b,\alpha) = \frac{1}{2}||w||^2 - \sum_{i=1}^{N} \alpha_i[y_i(w^T x_i+ b) -1]</script><p>为了得到问题的对偶(dual)形式。我们需要首先先求$L(w,b,x)$对w,b的极小：</p>
+<p>即将拉格朗日函数分别对w,b分别求偏导并令其等于0.</p>
+<script type="math/tex; mode=display">\triangledown_w L(w,b,\alpha) = w - \sum_{i=1}^{N} \alpha_i y_i x_i = 0</script><script type="math/tex; mode=display">\triangledown_b L(w,b,\alpha) = w - \sum_{i=1}^{N}\alpha_i y_i = 0</script><p>得</p>
+<script type="math/tex; mode=display">w = \sum_{i=1}^{N} \alpha_i y_i x_i</script><script type="math/tex; mode=display">0 = \sum_{i=1}^{N}\alpha_i  y_i</script><p>再将其代回拉格朗日函数得：</p>
+<script type="math/tex; mode=display">L(w,b,\alpha) = \sum_{i=1}^{N} \alpha_i -  \frac{1}{2} \sum_{i,j=1}^{N} \alpha_i \alpha_j y_i y_j  x_i^T x_j - b\sum_{i=1}^{N} \alpha_i y_i</script><p>得</p>
+<script type="math/tex; mode=display">L(w,b,\alpha) = \sum_{i=1}^{N} \alpha_i -  \frac{1}{2} \sum_{i,j=1}^{N} \alpha_i \alpha_j y_i y_j  x_i^T x_j</script><p>由此，我们问题进一步转化为对偶优化问题：</p>
+<p>求$L(w,b,\alpha)$对$\alpha$ 的极大即</p>
+<script type="math/tex; mode=display">max_{\alpha}\ \sum_{i=1}^{N} \alpha_i -  \frac{1}{2} \sum_{i,j=1}^{N} \alpha_i \alpha_j y_i y_j  x_i^T x_j</script><script type="math/tex; mode=display">s.t.\ \alpha_i\ge 0</script><script type="math/tex; mode=display">\ \ \ \  0 = \sum_{i=1}^{N}\alpha_i  y_i</script><p>说了这么多求出$\alpha$ 有什么用呢？因为满足<a href="https://en.wikipedia.org/wiki/Karush%E2%80%93Kuhn%E2%80%93Tucker_conditions" target="_blank" rel="external">KKT</a>条件下，对偶最优化问题的解$\alpha^<em> = (\alpha_1^</em>,…\alpha_N^<em>)$ 与原始最优问题(找到分隔最佳的超平面$(w^</em>,b^*)$) 有下列关系：</p>
+<script type="math/tex; mode=display">w^* = \sum_i \alpha_i^*y_i x_i</script><script type="math/tex; mode=display">b^* = y_i - \sum_i \alpha_i^*y_i x_i</script><p>因此分隔超平面可以写成</p>
+<script type="math/tex; mode=display">w^T x + b =  \sum_{i=1}^N \alpha_i^*y_i \langle x_i,x \rangle + b^*</script><p>其中$\langle x_i,x \rangle$ 表示向量内积，等同于$x_i^Tx$</p>
+<h3 id="软间隔Soft-Margin"><a href="#软间隔Soft-Margin" class="headerlink" title="软间隔Soft Margin"></a>软间隔Soft Margin</h3><p>上述讨论都是在数据点线性可分情况下进行的。我们将上述间隔称为硬间隔。</p>
+<p>现实生活中，有很多数据是没有办法一刀切开的。如下图所示，无论分隔线放在哪里，都不可能将蓝点和红点完全分开。即无法满足函数间隔大于等于1的约束条件。这时我们该如何定义最个间隔并找出对偶优化问题呢？</p>
+<p><img src="http://image.slidesharecdn.com/eventclassificationpredictionusingsupportvectormachine-160405104743/95/event-classification-prediction-using-support-vector-machine-15-638.jpg?cb=1459853447" alt="Alt text"></p>
+<h4 id="松弛变量Slack-Variable"><a href="#松弛变量Slack-Variable" class="headerlink" title="松弛变量Slack Variable"></a>松弛变量Slack Variable</h4><p>为了解决这个问题，我们引入一个松弛变量$\xi\ge 0$ ，使函数间隔加上松弛变量大于等于1。这样约束条件变为</p>
+<script type="math/tex; mode=display">y_i(w^Tx+b) \ge 1 - \xi_i</script><p>松弛变量的引入常常是为了便于在更大的可行域内求解。若为0，则收敛到原有状态，若大于零，则约束松弛。即上述线性可分支持向量机是线性支持向量机的一种特例：松弛变量$\xi=0$</p>
+<h4 id="惩罚参数C"><a href="#惩罚参数C" class="headerlink" title="惩罚参数C"></a>惩罚参数C</h4><p>引入松弛变量后必然会对优化产生影响，我们对松弛变量加上一个惩罚(penalty)参数C，目标函数调整为</p>
+<script type="math/tex; mode=display">\frac{1}{2}||w||^2 + C\sum_{i=1}^N \xi_i</script><p>C的作用在于希望使$||w||$ 尽量小(即间隔尽量大)，同时使大多数样本点的函数间隔大于1(即误分类的个数尽量少)。当C比较大时，对误分类的惩罚增大；当C小时，对误分类的惩罚减小。</p>
+<p><img src="http://yaroslavvb.com/upload/save/so-libsvm.png" alt="Alt text"></p>
+<p>上图中被圆圈圈住的点是不同C值下的支持向量。可以看出，C的减小使得分类器为了获得更好的泛化能力而牺牲样本点线性分隔性。反过来说，C值越大，分类器就越不愿意允许分类错误（“离群点”）。如果C值太大，分类器就会竭尽全力地在训练数据上少犯错误，而实际上这是不可能/没有意义的，于是就造成过拟合。</p>
+<h4 id="对偶问题优化-1"><a href="#对偶问题优化-1" class="headerlink" title="对偶问题优化"></a>对偶问题优化</h4><p>经过上面一番探讨，线性支持向量机的学习问题变为：</p>
+<script type="math/tex; mode=display">min_{w,b,\xi}\ \ \ \ \frac{1}{2}||w||^2 + C\sum_{i=1}^N \xi_i</script><script type="math/tex; mode=display">s.t.\ \ \ \ y_i(w^Tx+b) \ge 1 - \xi_i,\ \ i = 1,2,\dots N</script><script type="math/tex; mode=display">\ \ \ \ \ \ \xi_i \ge 0,\ \ i = 1,2,\dots N</script><p>相应的拉格朗日函数为</p>
+<script type="math/tex; mode=display">L(w,b,\xi,\alpha,r) = \frac{1}{2}||w||^2+ C\sum_{i=1}^N \xi_i - \sum_{i=1}^{N} \alpha_i[y_i(w^T x_i+ b) -1 + \xi_i] - \sum_{i=1}^N r_i\xi_i</script><p>其中$\alpha_i$和$r_i$ 均为拉格朗日乘子($\ge 0$)。如之前推导一般，首先求函数对$w,b$的导数，然后回代入函数。得：</p>
+<script type="math/tex; mode=display">max_{\alpha}\ \sum_{i=1}^{N} \alpha_i -  \frac{1}{2} \sum_{i,j=1}^{N} \alpha_i \alpha_j y_i y_j  \langle x_i,x_j \rangle</script><script type="math/tex; mode=display">s.t.\ 0\le \alpha_i\le C</script><script type="math/tex; mode=display">\ \ \ \  0 = \sum_{i=1}^{N}\alpha_i  y_i</script><h3 id="非线性支持向量机"><a href="#非线性支持向量机" class="headerlink" title="非线性支持向量机"></a>非线性支持向量机</h3><p>软间隔解决依然是近似线性可分的数据集，而一些数据集则是完全非线性可分的(或者有噪声的)。如下图所示</p>
+<p><img src="https://sebastianraschka.com/images/blog/2014/kernel_pca/linear_vs_nonlinear.png" alt=""></p>
+<p>原始数据集虽然非线性可分，但是我们可以首先通过一系列变换将数据变得线性可分，即核技巧(kernel trick)。</p>
+<h4 id="核kernel"><a href="#核kernel" class="headerlink" title="核kernel"></a>核kernel</h4><p>核的作用就是通过一个非线性变换将输入空间（欧氏空间$R^n$）对应到一个特征空间。这样线性支持向量机便可以在这个特征空间寻找一个超平面完成分类问题。</p>
+<p><img src="http://ww3.sinaimg.cn/large/006tNbRwgw1fao98zu82dj30jy0c80uk.jpg" alt="屏幕快照 2016-12-12 19.56.54"></p>
+<p>我们用$K(x_i, x_j)$表示核函数,并且</p>
+<script type="math/tex; mode=display">K(x_i, x_j) = \langle \phi(x_i),\phi(x_j) \rangle</script><p>其中$\phi(x)$ 表示输入空间到特征空间的映射。</p>
+<p><img src="http://ww3.sinaimg.cn/large/006tNbRwgw1faoubck6z7j30v20htmzp.jpg" alt="屏幕快照 2016-12-13 08.05.36"></p>
+<p>这是不是意味着我们需要先定义映射关系呢？并不是的，映射常常导致特征变多（维数增多）。而且非常不容易计算。</p>
+<p>核函数能简化映射空间中的内积运算，避开了直接在高维空间中进行计算。给定核函数下，特征空间可以取不同的映射。可以说核函数是特征空间的隐式映射。当映射函数是非线性时，学习到的含有核函数的支持向量机即为非线性分类器。</p>
+<h4 id="对偶问题优化-2"><a href="#对偶问题优化-2" class="headerlink" title="对偶问题优化"></a>对偶问题优化</h4><p>引入核函数后(核函数替代内积)，优化问题变为：</p>
+<script type="math/tex; mode=display">max_{\alpha}\ \sum_{i=1}^{N} \alpha_i -  \frac{1}{2} \sum_{i,j=1}^{N} \alpha_i \alpha_j y_i y_j  K(x_i,x_j)</script><script type="math/tex; mode=display">s.t.\ 0\le \alpha_i\le C</script><script type="math/tex; mode=display">\ \ \ \  0 = \sum_{i=1}^{N}\alpha_i  y_i</script><h3 id="常用的核-kernel"><a href="#常用的核-kernel" class="headerlink" title="常用的核(kernel)"></a>常用的核(kernel)</h3><p>不同的核有不同的效果，什么都不用时也可以视为核的一种(线性核)。当然不是随便定义一个函数就可以作为核的。核函数必须是正定核函数(positive definite kernel function)，在此就不证明了。这里介绍几个常用的核函数。</p>
+<h4 id="线性核-Linear"><a href="#线性核-Linear" class="headerlink" title="线性核(Linear)"></a>线性核(Linear)</h4><script type="math/tex; mode=display">K(x_i,x_j) = \langle x_i, x_j \rangle</script><h4 id="多项式核-Polynomial"><a href="#多项式核-Polynomial" class="headerlink" title="多项式核(Polynomial)"></a>多项式核(Polynomial)</h4><script type="math/tex; mode=display">K(x_i,x_j) = (\langle x_i, x_j \rangle + 1)^d</script><p>该核的对应的映射空间维度是$\binom{m+d}{d}$ ，其中m是原始空间的维度 </p>
+<p><img src="http://images.slideplayer.com/24/7016025/slides/slide_61.jpg" alt=""></p>
+<h4 id="高斯核-Gaussian"><a href="#高斯核-Gaussian" class="headerlink" title="高斯核(Gaussian)"></a>高斯核(Gaussian)</h4><script type="math/tex; mode=display">K(x_i,x_j) =exp (\frac{||x_i - x_j||}{2\sigma^2})</script><p><img src="https://i.stack.imgur.com/jCUj2.png" alt=""></p>
+<p>不同$\sigma$ 下的高斯函数，从左到右$\sigma^2$ 依次减小</p>
+<p> 高斯核更常用的名字是<strong>径向基函数核</strong>（radial basis function kernel），即rbf核。大多数库径向基核是默认的核。</p>
+<p>SVM的核还有很多比如，字符串核(string kernel function)，Sigmoid核等等。可以通过交叉验证实验不同核与参数的效果，缺点就是处理大数据集时会比较慢。</p>
+<h3 id="SVM优缺点"><a href="#SVM优缺点" class="headerlink" title="SVM优缺点"></a>SVM优缺点</h3><p>最后总结一下SVM的优缺点</p>
+<h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><ul>
+<li>因为核技巧，处理高维数据很有效</li>
+<li>SVM本质是一个凸优化问题，没有局部最小，并且有相应高效的算法（SMO）</li>
+<li>只需要用到训练集的一部分（支持向量），所以空间效率高</li>
+<li>多样性：决策函数可用不同核函数，并且可以自定义</li>
+</ul>
+<h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4><ul>
+<li>当特征维数远大于样本数时效果不好</li>
+<li>训练和预测速度慢</li>
+</ul>
+<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>SVM作为一个庞大的算法家族，区区一篇博文无法写尽SVM的点点滴滴，尚有SMO算法，SVM在回归问题的应用没有介绍。另外由本人对SVM应用还不是很多，很多地方理解还不够深入，如有疏漏，请多多指正。</p>
+<h3 id="References"><a href="#References" class="headerlink" title="References"></a>References</h3><ol>
+<li>李航 《统计学习方法》</li>
+<li>Peter Harrington 《机器学习实战》</li>
+<li>Toby Segaran 《集体智慧编程》</li>
+<li><a href="http://nlp.stanford.edu/IR-book/html/htmledition/support-vector-machines-the-linearly-separable-case-1.html" target="_blank" rel="external">Support vector machines: The linearly separable case</a></li>
+<li>Andrew Ng <a href="http://cs229.stanford.edu/notes/cs229-notes3.pdf" target="_blank" rel="external">CS229 Lecture notes</a></li>
+<li><a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/svmtutorial.pdf" target="_blank" rel="external">A Tutorial on Support Vector Machines for Pattern Recognition</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Karush–Kuhn–Tucker_conditions" target="_blank" rel="external">Karush–Kuhn–Tucker conditions</a></li>
+<li><a href="http://stackoverflow.com/questions/4629505/svm-hard-or-soft-margins" target="_blank" rel="external">SVM - hard or soft margins?</a></li>
+<li><a href="http://slideplayer.com/slide/10090713/" target="_blank" rel="external">Introduction to SVM Zhang Liliang</a></li>
+<li><a href="http://www.robots.ox.ac.uk/~az/lectures/ml/lect3.pdf" target="_blank" rel="external">Lecture 3: SVM dual, kernels and regression</a></li>
+<li><a href="http://blog.csdn.net/v_july_v/article/details/7624837" target="_blank" rel="external">支持向量机通俗导论（理解SVM的三层境界）</a></li>
+<li><a href="http://slideplayer.com/slide/1579281/" target="_blank" rel="external">A Gentle Introduction to Support Vector Machines in Biomedicine</a></li>
+<li><a href="http://stats.stackexchange.com/questions/24437/advantages-and-disadvantages-of-svm" target="_blank" rel="external">Advantages and disadvantages of SVM</a></li>
+<li><a href="http://www.support-vector.net/icml-tutorial.pdf" target="_blank" rel="external">Support Vector and Kernel Machines</a></li>
+<li><p><a href="https://www.zhihu.com/question/40217487" target="_blank" rel="external">关于SVM中，对常数C的理解？</a></p>
+<p>​</p>
+<p>​</p>
+<p>​</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/机器学习/" rel="tag">#机器学习</a>
+          
+            <a href="/tags/SVM/" rel="tag">#SVM</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/12/机器学习总结-模型评估与验证/" rel="next" title="机器学习总结-模型评估与验证">
+                <i class="fa fa-chevron-left"></i> 机器学习总结-模型评估与验证
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/12/17/MLND回顾-监督学习(2) 决策树/" rel="prev" title="MLND回顾-监督学习(2) 决策树">
+                MLND回顾-监督学习(2) 决策树 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/12/13/MLND回顾-监督学习(1）支持向量机/"
+           data-title="MLND回顾-监督学习(1) 支持向量机" data-url="http://yoursite.com/2016/12/13/MLND回顾-监督学习(1）支持向量机/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://lh3.googleusercontent.com/6POt0fuwceChcfDeOgRxpoDXWwKYyS4knFg1Nw2-oTyWLLeFrtJ1cxpxLY1eug42vmS_pox3Ng=w1440-h900-rw-no"
+               alt="RyannnG" />
+          <p class="site-author-name" itemprop="name">RyannnG</p>
+          <p class="site-description motion-element" itemprop="description">Less is More</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/RyannnG" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/thecolorofdreams" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#导语"><span class="nav-number">1.</span> <span class="nav-text">导语</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线性可分SVM"><span class="nav-number">2.</span> <span class="nav-text">线性可分SVM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分隔超平面Hyperplane"><span class="nav-number">3.</span> <span class="nav-text">分隔超平面Hyperplane</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#支持向量Support-Vector"><span class="nav-number">3.1.</span> <span class="nav-text">支持向量Support Vector</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最大间隔"><span class="nav-number">4.</span> <span class="nav-text">最大间隔</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#函数间隔functional-margin"><span class="nav-number">4.1.</span> <span class="nav-text">函数间隔functional margin</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#几何间隔geometric-margin"><span class="nav-number">4.2.</span> <span class="nav-text">几何间隔geometric margin</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#间隔最大化"><span class="nav-number">4.3.</span> <span class="nav-text">间隔最大化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对偶问题优化"><span class="nav-number">4.4.</span> <span class="nav-text">对偶问题优化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#软间隔Soft-Margin"><span class="nav-number">5.</span> <span class="nav-text">软间隔Soft Margin</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#松弛变量Slack-Variable"><span class="nav-number">5.1.</span> <span class="nav-text">松弛变量Slack Variable</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#惩罚参数C"><span class="nav-number">5.2.</span> <span class="nav-text">惩罚参数C</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对偶问题优化-1"><span class="nav-number">5.3.</span> <span class="nav-text">对偶问题优化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非线性支持向量机"><span class="nav-number">6.</span> <span class="nav-text">非线性支持向量机</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#核kernel"><span class="nav-number">6.1.</span> <span class="nav-text">核kernel</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对偶问题优化-2"><span class="nav-number">6.2.</span> <span class="nav-text">对偶问题优化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常用的核-kernel"><span class="nav-number">7.</span> <span class="nav-text">常用的核(kernel)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#线性核-Linear"><span class="nav-number">7.1.</span> <span class="nav-text">线性核(Linear)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#多项式核-Polynomial"><span class="nav-number">7.2.</span> <span class="nav-text">多项式核(Polynomial)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#高斯核-Gaussian"><span class="nav-number">7.3.</span> <span class="nav-text">高斯核(Gaussian)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SVM优缺点"><span class="nav-number">8.</span> <span class="nav-text">SVM优缺点</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#优点"><span class="nav-number">8.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#缺点"><span class="nav-number">8.2.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结语"><span class="nav-number">9.</span> <span class="nav-text">结语</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#References"><span class="nav-number">10.</span> <span class="nav-text">References</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">RyannnG</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"iissnan-notes"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+  <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("10GpSWeSUn01nDwu9s30OGk7-gzGzoHsz", "0x4MYwv9Hx6LbpMrJu8xTx6f");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+</body>
+</html>
