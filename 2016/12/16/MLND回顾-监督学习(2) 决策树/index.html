@@ -92,7 +92,7 @@
 各">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MLND回顾-监督学习(2) 决策树">
-<meta property="og:url" content="http://yoursite.com/2016/12/17/MLND回顾-监督学习(2) 决策树/index.html">
+<meta property="og:url" content="http://yoursite.com/2016/12/16/MLND回顾-监督学习(2) 决策树/index.html">
 <meta property="og:site_name" content="RyannnG‘s Blog">
 <meta property="og:description" content="导语决策树是一种基本的分类与回归方法。很多高级一点机器方法都用到了决策树，而且决策树很直观容易理解，很适合初学者入门。但是正是因为容易理解，反而容易忽视其背后的统计学概率论等算法基础。因此此篇就总结并讲解了分类决策树的特征选择依据和构建和3种常见决策树的异同。希望读者阅读后对决策树有更深入的数学理解。
 解决的问题
@@ -109,7 +109,7 @@
 <meta property="og:image" content="http://ww1.sinaimg.cn/large/006tNbRwgw1fasn753zfnj30bf02qq33.jpg">
 <meta property="og:image" content="http://ww1.sinaimg.cn/large/006tNbRwgw1fasnxgt475j30c908ttaa.jpg">
 <meta property="og:image" content="http://ww1.sinaimg.cn/large/006tNbRwgw1fasy7en2raj30em0d2758.jpg">
-<meta property="og:updated_time" content="2016-12-17T00:48:04.000Z">
+<meta property="og:updated_time" content="2016-12-17T08:48:54.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MLND回顾-监督学习(2) 决策树">
 <meta name="twitter:description" content="导语决策树是一种基本的分类与回归方法。很多高级一点机器方法都用到了决策树，而且决策树很直观容易理解，很适合初学者入门。但是正是因为容易理解，反而容易忽视其背后的统计学概率论等算法基础。因此此篇就总结并讲解了分类决策树的特征选择依据和构建和3种常见决策树的异同。希望读者阅读后对决策树有更深入的数学理解。
@@ -139,7 +139,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2016/12/17/MLND回顾-监督学习(2) 决策树/"/>
+  <link rel="canonical" href="http://yoursite.com/2016/12/16/MLND回顾-监督学习(2) 决策树/"/>
 
 
   <title> MLND回顾-监督学习(2) 决策树 | RyannnG‘s Blog </title>
@@ -294,8 +294,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-12-17T01:00:05+08:00" content="2016-12-17">
-              2016-12-17
+            <time itemprop="dateCreated" datetime="2016-12-16T21:00:05+08:00" content="2016-12-16">
+              2016-12-16
             </time>
           </span>
 
@@ -305,8 +305,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/12/17/MLND回顾-监督学习(2) 决策树/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/17/MLND回顾-监督学习(2) 决策树/" itemprop="commentsCount"></span>
+                <a href="/2016/12/16/MLND回顾-监督学习(2) 决策树/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/16/MLND回顾-监督学习(2) 决策树/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -316,7 +316,7 @@
 
           
           
-             <span id="/2016/12/17/MLND回顾-监督学习(2) 决策树/" class="leancloud_visitors" data-flag-title="MLND回顾-监督学习(2) 决策树">
+             <span id="/2016/12/16/MLND回顾-监督学习(2) 决策树/" class="leancloud_visitors" data-flag-title="MLND回顾-监督学习(2) 决策树">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -470,6 +470,7 @@
 <script type="math/tex; mode=display">D_2 = D - D_1</script><p>在特征A的条件下，集合的D的基尼指数定义为</p>
 <script type="math/tex; mode=display">Gini(D,A)=\frac{|D_1|}{|D|}Gini(D_1) + \frac{|D_2|}{|D|}Gini(D_2)</script><p>和熵类似，基尼指数$Gini(D)$表示集合D的不确定性，基尼指数$Gini(D,A)$表示经$A=a$分割后集合D的不确定性，即基尼指数值越大，样本集合的不确定性也就越大。</p>
 <p><img src="http://ww1.sinaimg.cn/large/006tNbRwgw1fasy7en2raj30em0d2758.jpg" alt="屏幕快照 2016-12-16 21.22.49"></p>
+<p>如上图所示，熵达到峰值的过程要相对慢一些，因此熵对于很混乱的集合的“判罚”往往要更重一些。</p>
 <h5 id="实例-4"><a href="#实例-4" class="headerlink" title="实例"></a>实例</h5><p>继续看高尔夫的例子，共有9次yes和5次no，因此基尼指数计算为</p>
 <script type="math/tex; mode=display">Gini(play\ glof) = 1 - (\frac{9}{14})^2 - (\frac{5}{14})^2 = 0.459</script><h3 id="算法构建"><a href="#算法构建" class="headerlink" title="算法构建"></a>算法构建</h3><p>三种算法中，ID3和C4.5是一脉相承的，唯一的区别在于ID3采用信息增益准则选择特征，而C4.5选用信息增益比。CART分类决策树采用基尼指数，构建略简单一些，为二叉树。三种树均为Top-down模式，即从根节点贪心递归地构建，直至整个树“完全生长”。</p>
 <p>另外要注意的点是决策树$if-then$  的规则集合的一个性质：互斥并且完备，即每一个实例都被一条路径或一条规则所覆盖，而且只被一条路径或者一条规则所覆盖。</p>
@@ -489,16 +490,21 @@
 <li>对两个子结点递归调用1，2，直至满足停止条件</li>
 </ol>
 <p>停止条件可以时结点的样本个数小于阈值，或者基尼指数小于阈值，或者没有更多特征。</p>
-<h3 id="剪枝Pruning"><a href="#剪枝Pruning" class="headerlink" title="剪枝Pruning"></a>剪枝Pruning</h3><p>上述的决策树产生方法均是到不能产生为止。这决策树往往对训练集拟合的很好，但是没有很好的泛化能力，也容易受到噪声noise和outlier的影响。</p>
-<p>为了防止过拟合，决策树有种方法叫做剪枝，即剪掉一部分枝叶以简化决策树，从而得到更好的泛化能力。</p>
-<p>剪枝又分为两种，一种叫前剪枝Prepruning，另一种叫后剪枝Postpruning。前剪枝就是在树生成时便规定一个阈值，低于阈值时便不再生长。其实已经运用在了上述算法构建中(即阈值和停止条件）。缺点在于不容易找到一个合适的阈值。后剪枝则是在树完全生长后，我们通过剪枝算法，剪掉一部分枝叶。</p>
+<h3 id="剪枝Pruning"><a href="#剪枝Pruning" class="headerlink" title="剪枝Pruning"></a>剪枝Pruning</h3><p>上述的决策树生成方法均只考虑了局部子树的信息增益／信息增益比最优，但是对整体而言未必是最好的结果。这决策树往往对训练集拟合的很好，但是没有很好的泛化能力，也容易受到噪声noise和outlier的影响。为了防止过拟合，决策树有种方法叫做剪枝，即剪掉一部分枝叶以简化决策树，从而得到更好的泛化能力。</p>
+<p>剪枝又可分为两种，一种叫前剪枝Prepruning，另一种叫后剪枝Postpruning。前剪枝就是在树生成时便规定一个阈值，低于阈值时便不再生长。其实已经运用在了上述算法构建中(阈值和停止条件）。缺点在于不容易找到一个合适的阈值。后剪枝则是在树完全生长后，我们通过剪枝算法，剪掉一部分枝叶。</p>
+<p>下面重点讲解后剪枝。</p>
+<p>后剪枝的核心思想便是：如果剪掉一个子树(合并其枝叶)可以使总的损失函数减小，则将其剪掉。</p>
+<p>接下来我们构造一个简单的损失函数$C_{\alpha}(T)$</p>
+<p>假设决策树T的有$|T|$ 个叶结点，表示模型的复杂度，在叶结点$t$有$N_t$个样本点，$H_t$叶结点上的熵，$\alpha\ge 0$为参数，定义决策树的损失函数为：</p>
+<script type="math/tex; mode=display">C_{\alpha} = \sum_{t=1}^{|T|} N_t H_t + \alpha|T|</script><p> $\alpha$ 在式中控制预测误差和模型复杂度的影响，较大的促使选择较简单的模型，较小的促使是选择较复杂的模型，需要事先确定。</p>
+<p>具体实施时通过计算每个结点的熵递归地向上回缩，如果回缩后(剪掉)损失函数变小了，则进行剪枝。</p>
 <h3 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h3><h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><ul>
 <li>易于理解与解释，易可视化</li>
 <li>不怎么需要数据预处理</li>
 <li>用树预测数据时计算复杂度为$O(log n)$，很快</li>
 <li>均可用于处理数值型和标类型数据</li>
 <li>可用于需要多输出的问题</li>
-<li>属于白箱模型，结果易解释。反例：黑箱模型-神经网络，结果不易解释</li>
+<li>属于白箱模型，结果易解释。(反例：黑箱模型-神经网络(ANN)，结果不易解释)</li>
 </ul>
 <h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4><ul>
 <li>容易建造过复杂的树，从而过拟合。</li>
@@ -507,13 +513,13 @@
 <li>有一些问题很难用决策树学习。比如异或问题XOR，parity和multiplexer（后面两个不太会翻译）</li>
 <li>如果一些类占绝定性（dominate）的比例，则决策树会造成偏差(bias)。推荐在用决策树学习之前平衡下数据集</li>
 </ul>
-<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>剪枝的具体方法还没有总结，一篇里塞下全部内容有些臃肿。</p>
+<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>决策树易于解释的优点同样也是它的缺陷之一，即决策树最适合用来处理的是那些带分界点的，由大量分类数据和数值数据共同组成的数据集。如果对决策过程理解至关重要，那么采用决策树就在合适不过。</p>
 <h3 id="References"><a href="#References" class="headerlink" title="References"></a>References</h3><ol>
 <li><p>Trevor Hastie, Robert Tibshirani, Jerome Friedman <em>The Elements of Statistical Learning</em></p>
 </li>
 <li><p>李航 《统计学习方法》</p>
 </li>
-<li><p>《机器学习实战》</p>
+<li><p>Peter Harrington《机器学习实战》</p>
 </li>
 <li><p><a href="http://www.saedsayad.com/decision_tree.htm" target="_blank" rel="external">Decision Tree - Classification</a></p>
 </li>
@@ -592,8 +598,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/12/17/MLND回顾-监督学习(2) 决策树/"
-           data-title="MLND回顾-监督学习(2) 决策树" data-url="http://yoursite.com/2016/12/17/MLND回顾-监督学习(2) 决策树/">
+      <div class="ds-thread" data-thread-key="2016/12/16/MLND回顾-监督学习(2) 决策树/"
+           data-title="MLND回顾-监督学习(2) 决策树" data-url="http://yoursite.com/2016/12/16/MLND回顾-监督学习(2) 决策树/">
       </div>
     
   </div>
