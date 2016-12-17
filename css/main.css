@@ -1557,7 +1557,7 @@ pre .javascript .function {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #6a086c;
+  background: #74ffff;
 }
 .links-of-blogroll {
   font-size: 13px;
@@ -2126,10 +2126,6 @@ a.search-result {
 .page-post-detail .comments {
   overflow: hidden;
 }
-.header {
-  background: url("/images/mountain.jpg");
-  background-repeat: no-repeat;
-}
 @media (max-width: 767px) {
   .header-inner,
   .container .main-inner,
@@ -2203,4 +2199,8 @@ embed {
 }
 .links-of-blogroll-inline .links-of-blogroll-item {
   display: inline-block;
+}
+.header {
+  background: url("/images/mountain.jpg");
+  background-repeat: no-repeat;
 }
