@@ -1,0 +1,918 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Ensemble,AdaBoost,Bagging,Boosting," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="导语前面总结的SVM，决策树还有没有总结的神经网络等均是试图构建单一强大的学习器，通过选择不同细分的算法或调节参数应对不同的问题。而实际中我们自然希望“兼听则明”，将不同的分类器组合起来从而达到更好的效果。这种组合的思路被称作集成方法Ensemble Method。集成可以有多种形式：可以是不同算法的集成，也可以是同一算法在不同设置下的集成，还可以是数据集不同部分分配给不同分类器之后的集成。 而本">
+<meta property="og:type" content="article">
+<meta property="og:title" content="监督学习(3) Ensemble: AdaBoost">
+<meta property="og:url" content="http://yoursite.com/2016/12/19/监督学习-3-Ensemble-AdaBoost/index.html">
+<meta property="og:site_name" content="RyannnG‘s Blog">
+<meta property="og:description" content="导语前面总结的SVM，决策树还有没有总结的神经网络等均是试图构建单一强大的学习器，通过选择不同细分的算法或调节参数应对不同的问题。而实际中我们自然希望“兼听则明”，将不同的分类器组合起来从而达到更好的效果。这种组合的思路被称作集成方法Ensemble Method。集成可以有多种形式：可以是不同算法的集成，也可以是同一算法在不同设置下的集成，还可以是数据集不同部分分配给不同分类器之后的集成。 而本">
+<meta property="og:image" content="http://ww3.sinaimg.cn/large/006tNbRwgw1fauxfz0q5bj30az06x3yv.jpg">
+<meta property="og:image" content="http://ww2.sinaimg.cn/large/006tNbRwgw1fauxg01y1tj30go0ciwf5.jpg">
+<meta property="og:image" content="http://ww2.sinaimg.cn/large/006tNbRwgw1favw2rrrkqj30d1094t9u.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/006tNbRwgw1favw2re356j30d908it9f.jpg">
+<meta property="og:image" content="http://ww3.sinaimg.cn/large/006tNbRwgw1favw2oiuc1j305y068wek.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/006tNbRwgw1favw2q0i4uj30bv080dg6.jpg">
+<meta property="og:image" content="http://ww2.sinaimg.cn/large/006tNbRwgw1favw2r1sdbj30gl07st99.jpg">
+<meta property="og:image" content="http://ww3.sinaimg.cn/large/006tNbRwgw1favw2neqggj30gx07wdgg.jpg">
+<meta property="og:image" content="http://ww4.sinaimg.cn/large/006tNbRwgw1favw2p6j6tj30gc094dgb.jpg">
+<meta property="og:updated_time" content="2016-12-19T02:40:28.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="监督学习(3) Ensemble: AdaBoost">
+<meta name="twitter:description" content="导语前面总结的SVM，决策树还有没有总结的神经网络等均是试图构建单一强大的学习器，通过选择不同细分的算法或调节参数应对不同的问题。而实际中我们自然希望“兼听则明”，将不同的分类器组合起来从而达到更好的效果。这种组合的思路被称作集成方法Ensemble Method。集成可以有多种形式：可以是不同算法的集成，也可以是同一算法在不同设置下的集成，还可以是数据集不同部分分配给不同分类器之后的集成。 而本">
+<meta name="twitter:image" content="http://ww3.sinaimg.cn/large/006tNbRwgw1fauxfz0q5bj30az06x3yv.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/12/19/监督学习-3-Ensemble-AdaBoost/"/>
+
+
+  <title> 监督学习(3) Ensemble: AdaBoost | RyannnG‘s Blog </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?9ce3d6f1a43cd6ef9f9eddadd0c72220";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">RyannnG‘s Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                监督学习(3) Ensemble: AdaBoost
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-12-19T10:39:01+08:00" content="2016-12-19">
+              2016-12-19
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/12/19/监督学习-3-Ensemble-AdaBoost/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/19/监督学习-3-Ensemble-AdaBoost/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/12/19/监督学习-3-Ensemble-AdaBoost/" class="leancloud_visitors" data-flag-title="监督学习(3) Ensemble: AdaBoost">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="导语"><a href="#导语" class="headerlink" title="导语"></a>导语</h3><p>前面总结的SVM，决策树还有没有总结的神经网络等均是试图构建单一强大的学习器，通过选择不同细分的算法或调节参数应对不同的问题。而实际中我们自然希望“兼听则明”，将不同的分类器组合起来从而达到更好的效果。这种组合的思路被称作集成方法Ensemble Method。集成可以有多种形式：可以是不同算法的集成，也可以是同一算法在不同设置下的集成，还可以是数据集不同部分分配给不同分类器之后的集成。 而本篇总结的AdaBoost则通过一系列弱学习器的组合达到很强的分类效果。</p>
+<a id="more"></a>
+<h3 id="集成Ensemble"><a href="#集成Ensemble" class="headerlink" title="集成Ensemble"></a>集成Ensemble</h3><p>集成方法包括Bagging和Boosting，在介绍这两个概念之前先让我们了解下Boostrapping。</p>
+<h4 id="自举Bootstrapping"><a href="#自举Bootstrapping" class="headerlink" title="自举Bootstrapping"></a>自举Bootstrapping</h4><p>Bootstrapping名字来自成语“pull up by your own bootstraps”，意思是依靠你自己的资源，称为自助法。它是一种有放回的抽样方法，允许抽取的样本集有重复元素，如下图所示。</p>
+<p><img src="http://ww3.sinaimg.cn/large/006tNbRwgw1fauxfz0q5bj30az06x3yv.jpg" alt="屏幕快照 2016-12-18 08.48.53"></p>
+<h4 id="自举汇聚Bagging"><a href="#自举汇聚Bagging" class="headerlink" title="自举汇聚Bagging"></a>自举汇聚Bagging</h4><p>Bagging 是Bootstrap Aggregating的缩写。Bagging可分为三步：</p>
+<ol>
+<li>Boostrapping ：重抽样，从原始样本中抽出M个子集(可重复)</li>
+<li>Learning：对每个样本子集分别有一个分类器进行学习，得到M个结果</li>
+<li>Voting：对M个结果进行投票，最多的那个类别就是样本最终类别</li>
+</ol>
+<p><img src="http://ww2.sinaimg.cn/large/006tNbRwgw1fauxg01y1tj30go0ciwf5.jpg" alt="bagging"></p>
+<p>可以看出Bagging的特点就是“平权” + “少数服从多数”。在样例选择上，Bagging 的训练集是随机选取的，每个分类器学习的样本集不同并且独立，其中的每个样例的权重相等。在进行分类(预测)时，每个预测函数的权重相等，并且可以并行计算。</p>
+<p>好比一群学生想要得到一套考试题的答案，然后他们从这套考试题中随机抽出几道题组成N套考题。每个学生做其中一套得出被分配的题目的答案。最后这群学生将每道题目的答案汇总起来，选每道题得票最多的那个选项作为最终答案。这种方法很快，因为大家都在同时做，而且效果看起来也不错。</p>
+<p>但是这种“少数服从多数”方法也有很大的缺陷。正如“正确答案往往掌握在少数学霸手中”，如果大部分学生(预测函数)对某一道题选(预测)错了那么投票后自然也还是错的。更致命的是大家都是独立做的，并不知道哪道题是”易错题”，因此就没有办法针对这种”错题”刻意训练提高准确率了。</p>
+<h4 id="提升Boosting"><a href="#提升Boosting" class="headerlink" title="提升Boosting"></a>提升Boosting</h4><p>Boosing由Schapire在1989年提出。Bagging是并行学习，每个分类器相互独立；Boosting中的是串行学习，后一个分类器依赖于前一个分类器的结果，通过集中关注被已有分类器错分的那些数据来组合成新的分类器。</p>
+<p>要了解Boosting，必须先了解什么是”弱可学习”(weakly learnable)和相对应的”强可学习”(strongly learnable)。</p>
+<p>这两个概念是由Kearns和Valiant两个人提出来的，他们指出：</p>
+<blockquote>
+<p>在概率近似正确(probably pproximately correct, PAC)学习的框架中：一个概念，如果存在一个多项式的学习算法能够学习它，并且<strong>正确率很高</strong>，那么就称这个概念是<strong>强可学习的</strong>；一个概念，如果存在一个多项式的学习算法能够学习它，<strong>学习的正确率仅比随机猜测略好</strong> ，那么就称这个概念是<strong>弱可学习的</strong></p>
+</blockquote>
+<p>注意“强可学习” 和“弱可学习”对应的是概念本身，不是某个具体的算法，“弱学习器”和“强学习器”对应的才是具体算法。简单来说，强学习器就是”学霸“，回回考试考95+；而弱学习器就是“学渣”，每次考试勉强及格，英语听力考试戴不戴耳机无所谓的那种。常见的弱学习器的有决策树桩Decision Tree Stump和感知机Perceptron。</p>
+<p>后来Schapire证明了强可学习与弱可学习是等价的。也就是说我们可以将弱学习器“提升”为强学习器，因为弱学习器容易发现并且有模型简单计算快等优点。提升方法就是从学渣出发(弱学习器)，反复学习，得到一系列学渣(弱学习器)，然后组合这些学渣构成一个学霸(强学习器)。 Boosting的算法有很多，大多数都是改变训练数据的权值分布，AdaBoost便是其中一种。</p>
+<p>下面再用一个例子，解释Boosting的过程。</p>
+<p>假设现在有3个弱学习器$H_1,H_2,H_3$依次进行学习一个二类训练集$T$</p>
+<ol>
+<li>随机从$T$中抽出一部分子集组成$T_1$，训练弱学习器$H_1$</li>
+<li>从T中选取另一部分子集$T_2$ ，$T_2$满足的条件是$H_1$在$T_2$上一半正确一半错误 ，用$T_2$训练弱学习器$H_2$</li>
+<li>将$H_1$和$H_2$意见不同的数据集组成$T_3$ ，用$T_3$训练$H_3$ </li>
+<li>最终结果由$H_1,H_2,H_3$投票表决</li>
+</ol>
+<p><img src="http://ww2.sinaimg.cn/large/006tNbRwgw1favw2rrrkqj30d1094t9u.jpg" alt="屏幕快照 2016-12-19 08.30.31"></p>
+<h3 id="AdaBoost"><a href="#AdaBoost" class="headerlink" title="AdaBoost"></a>AdaBoost</h3><p>AdaBoost 是Adaptive Boosting的缩写。它的核心思路有两个：</p>
+<ol>
+<li><p>在每一轮过后通过提高那些在前一轮被弱分类器分错样例的权值，减小前一轮分对样例的权值，来使得分类器对误分的数据有较好的效果。(建立“错题本”，多关注错题，少关注做对的题)</p>
+</li>
+<li><p>通过加法模型将弱分类器进行线性组合，AdaBoost通过加权多数表决的方式，增大错误率小的分类器的权值，同时减小错误率较大的分类器的权值。即</p>
+<script type="math/tex; mode=display">f(x) = \sum_{t =1}^T \alpha_t h_t(x)</script><p>其中，$h_t(x)$ 表示预测函数(弱学习器)，$\alpha_t$表示该预测函数的权值</p>
+</li>
+</ol>
+<h4 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h4><p><img src="http://ww1.sinaimg.cn/large/006tNbRwgw1favw2re356j30d908it9f.jpg" alt="屏幕快照 2016-12-18 14.48.05"></p>
+<p>输入：二类训练集$(x_1, y_1), \dots, (x_n, y_n)$， $y_i \in {+1, -1}$</p>
+<ol>
+<li>初始化训练集权值分布$D_1(i) = \frac{1}{N}$</li>
+<li>对$t = 1,2 \dots, T$<ul>
+<li>对有$D_t$ 权值分配的训练集学习，得到分类器$h_t(x)$ </li>
+<li>计算$h<em>t(x)$在训练集上的误差率 $err_t = \sum</em>{i =1}^N D_t(i) I(y_i \ne h_t)$</li>
+<li>计算$h_t(x)$ 系数 $\alpha_t = \frac{1}{2}ln \frac{1 - err_t}{err_t}$</li>
+<li>更新权值分布$D<em>{t+1}(i) = \frac{D_t(i) exp(-\alpha_t y_i h_t(x_i))}{Z_t}$,其中$Z_t$ 是规范化因子$Z_t = \sum</em>{i=1}^N D_t(i)exp(-\alpha_t y_i h_t(x_i))$</li>
+</ul>
+</li>
+<li>构建分类器的线性组合$f(x) = \sum<em>{t =1}^T \alpha_t h_t(x)$ 得到最终分类器$H(x) = sign(\sum</em>{t =1}^T \alpha_t h_t(x))$</li>
+</ol>
+<h4 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h4><p>下面用一个例子说明上述AdaBoost权值更新算法。</p>
+<p><img src="http://ww3.sinaimg.cn/large/006tNbRwgw1favw2oiuc1j305y068wek.jpg" alt="屏幕快照 2016-12-19 09.09.21"></p>
+<p>如上图所示数据集有10个数据点，一半正类一半负类，现在我们用决策树桩作为基本分类器进行学习，决策桩在本例中是一条线。</p>
+<p><img src="http://ww1.sinaimg.cn/large/006tNbRwgw1favw2q0i4uj30bv080dg6.jpg" alt="屏幕快照 2016-12-19 09.13.39"></p>
+<p>初始化权值$D_1$：10个数据点，每个数据点权值为$\frac{1}{10}$</p>
+<p>$h_1:$  蓝色部分为$h_1$分的正类，粉色部分为负类。有三个正类被分错了，因此误差率$\epsilon_1 = 0.1\times 3 = 0.3$  ，计算$h_1$的系数$\alpha_1 = \frac{1}{2} \frac{1-0.3}{0.3} = 0.42$ 。更新数据权值，经计算后三个被分错的正类权值分别由0.1变为0.165，而其余7个分类正确的权值由0.1降为0.072。因此在数据集权值分布变为$D_2$ ,被分错的三个点形状变大了，正确的点变小了。</p>
+<p><img src="http://ww2.sinaimg.cn/large/006tNbRwgw1favw2r1sdbj30gl07st99.jpg" alt="屏幕快照 2016-12-19 09.38.23"></p>
+<p>$h_2:$ 针对具有$D_2$ 权值分布的数据进行分类，将线画在了右侧。此时$h_2$分类误差率为$\epsilon_2 = 0.21$ ，$h_2$的系数$\alpha_2=0.65$。如最右所示，更新各数据点权值为$D_3$ ，此时最左侧两个正类和最右侧的两个负类两次均分类正确，权值近一步降低为0.046；第一次被分错的三个正类，这次被分对了，权值由$D_2$ 中 0.165降为0.104，仍比最初0.1高；三个被分错的负类权值由0.072升为0.167。</p>
+<p><img src="http://ww3.sinaimg.cn/large/006tNbRwgw1favw2neqggj30gx07wdgg.jpg" alt="屏幕快照 2016-12-19 09.57.53"></p>
+<p>$h_3:$   基于数据集权值分布$D_3$，得到$h_3$ 的误差率$\epsilon_3 = 0.14$ ，$h_3$ 的系数$\alpha_3 = 0.92$ </p>
+<p> <img src="http://ww4.sinaimg.cn/large/006tNbRwgw1favw2p6j6tj30gc094dgb.jpg" alt="屏幕快照 2016-12-19 10.01.49"></p>
+<p>最后组合$h<em>1,h_2,h_3$，得到最终的分类函数$H</em>{final}$ 。可以看出通过数据点权值的更改，仅将分类效果很弱的分类器组合起来也得到了不错的分类效果。</p>
+<h3 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h3><h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><ul>
+<li>简单，计算高效</li>
+<li>没有复杂的参数</li>
+<li>关注更难分类的数据</li>
+<li>不易过拟合(原因：margin增大，详见参考14)</li>
+<li>多样性-可以选不同的基本分类器</li>
+</ul>
+<h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4><ul>
+<li>对噪声敏感</li>
+<li>需要挑一个好的弱学习器</li>
+</ul>
+<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>AdaBoost 还有其他的解释，即可认为AdaBoost是加法模型，损失函数为指数函数的分类学习方法。更严谨深入的研究可以参考Reference 1,2,4; AdaBoost 的实现可参考Reference 3。期望本篇能对大家有所帮助，如有错误请在评论里指出;)</p>
+<h3 id="References"><a href="#References" class="headerlink" title="References"></a>References</h3><ol>
+<li>Trevor Hastie, Robert Tibshirani, Jerome Friedman <em>The Elements of Statistical Learning</em></li>
+<li>李航 《统计学习方法》</li>
+<li>《机器学习实战》</li>
+<li><a href="https://storage.googleapis.com/supplemental_media/udacityu/367378584/Intro%20to%20Boosting.pdf" target="_blank" rel="external">Introduction to Boosting</a></li>
+<li><a href="http://stackoverflow.com/questions/20435717/what-is-a-weak-learner" target="_blank" rel="external">What is a weak learner?</a></li>
+<li>Rob Schapire <a href="http://media.nips.cc/Conferences/2007/Tutorials/Slides/schapire-NIPS-07-tutorial.pdf" target="_blank" rel="external">Theory and Applications of Boosting</a></li>
+<li><a href="http://m.blog.csdn.net/article/details?id=49765673" target="_blank" rel="external">快速理解bootstrap,bagging,boosting-三个概念</a></li>
+<li><a href="https://jeremykun.com/2015/05/18/boosting-census/" target="_blank" rel="external">Weak Learning, Boosting, and the AdaBoost algorithm</a></li>
+<li><a href="http://www.cse.cuhk.edu.hk/~lyu/seminar/07spring/Hongbo.ppt" target="_blank" rel="external">A Brief Introduction to Adaboost</a></li>
+<li><a href="http://blog.csdn.net/jlei_apple/article/details/8168856" target="_blank" rel="external">bootstrap, boosting, bagging 几种方法的联系</a></li>
+<li><a href="http://www.cnblogs.com/liuwu265/p/4690486.html" target="_blank" rel="external">Bagging和Boosting 概念及区别</a></li>
+<li><a href="http://people.cs.pitt.edu/~milos/courses/cs2750-Spring2014/Lectures/Class21.pdf" target="_blank" rel="external">Ensamble methods: Bagging and Boosting</a></li>
+<li><a href="https://www.analyticsvidhya.com/blog/2015/11/quick-introduction-boosting-algorithms-machine-learning/" target="_blank" rel="external">Quick Introduction to Boosting Algorithms in Machine Learning</a></li>
+<li><a href="https://cseweb.ucsd.edu/classes/sp12/cse151-a/lecture12-final.pdf" target="_blank" rel="external">CSE 151 Machine Learning</a></li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Ensemble/" rel="tag">#Ensemble</a>
+          
+            <a href="/tags/AdaBoost/" rel="tag">#AdaBoost</a>
+          
+            <a href="/tags/Bagging/" rel="tag">#Bagging</a>
+          
+            <a href="/tags/Boosting/" rel="tag">#Boosting</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/16/MLND回顾-监督学习(2) 决策树/" rel="next" title="监督学习(2) 决策树Decision Tree">
+                <i class="fa fa-chevron-left"></i> 监督学习(2) 决策树Decision Tree
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/12/19/监督学习-3-Ensemble-AdaBoost/"
+           data-title="监督学习(3) Ensemble: AdaBoost" data-url="http://yoursite.com/2016/12/19/监督学习-3-Ensemble-AdaBoost/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://lh3.googleusercontent.com/6POt0fuwceChcfDeOgRxpoDXWwKYyS4knFg1Nw2-oTyWLLeFrtJ1cxpxLY1eug42vmS_pox3Ng=w1440-h900-rw-no"
+               alt="RyannnG" />
+          <p class="site-author-name" itemprop="name">RyannnG</p>
+          <p class="site-description motion-element" itemprop="description">Less is More</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">4</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/RyannnG" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/thecolorofdreams" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#导语"><span class="nav-number">1.</span> <span class="nav-text">导语</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#集成Ensemble"><span class="nav-number">2.</span> <span class="nav-text">集成Ensemble</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#自举Bootstrapping"><span class="nav-number">2.1.</span> <span class="nav-text">自举Bootstrapping</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#自举汇聚Bagging"><span class="nav-number">2.2.</span> <span class="nav-text">自举汇聚Bagging</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#提升Boosting"><span class="nav-number">2.3.</span> <span class="nav-text">提升Boosting</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AdaBoost"><span class="nav-number">3.</span> <span class="nav-text">AdaBoost</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#算法"><span class="nav-number">3.1.</span> <span class="nav-text">算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#举例"><span class="nav-number">3.2.</span> <span class="nav-text">举例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优缺点"><span class="nav-number">4.</span> <span class="nav-text">优缺点</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#优点"><span class="nav-number">4.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#缺点"><span class="nav-number">4.2.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结语"><span class="nav-number">5.</span> <span class="nav-text">结语</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#References"><span class="nav-number">6.</span> <span class="nav-text">References</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">RyannnG</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"iissnan-notes"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+  <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("10GpSWeSUn01nDwu9s30OGk7-gzGzoHsz", "0x4MYwv9Hx6LbpMrJu8xTx6f");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+</body>
+</html>

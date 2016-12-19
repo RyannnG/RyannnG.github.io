@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="机器学习,SVM," />
+  <meta name="keywords" content="SVM,margin,kernel," />
 
 
 
@@ -96,7 +96,7 @@ SVM有哪几类？各自解决的问题是什么？
 有哪些超参数？调节各个超参数的作用是什么？
 为什么说SVM适合高维">
 <meta property="og:type" content="article">
-<meta property="og:title" content="MLND回顾-监督学习(1) 支持向量机">
+<meta property="og:title" content="监督学习(1) 支持向量机SVM">
 <meta property="og:url" content="http://yoursite.com/2016/12/13/MLND回顾-监督学习(1）支持向量机/index.html">
 <meta property="og:site_name" content="RyannnG‘s Blog">
 <meta property="og:description" content="导语做MLND项目时一直没有搞懂如何选择SVM参数，因此监督学习总结第一篇献给SVM，希望能带领大家稍稍深入理解SVM
@@ -121,9 +121,9 @@ SVM有哪几类？各自解决的问题是什么？
 <meta property="og:image" content="http://ww3.sinaimg.cn/large/006tNbRwgw1faoubck6z7j30v20htmzp.jpg">
 <meta property="og:image" content="http://images.slideplayer.com/24/7016025/slides/slide_61.jpg">
 <meta property="og:image" content="https://i.stack.imgur.com/jCUj2.png">
-<meta property="og:updated_time" content="2016-12-17T00:48:34.000Z">
+<meta property="og:updated_time" content="2016-12-19T02:37:05.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="MLND回顾-监督学习(1) 支持向量机">
+<meta name="twitter:title" content="监督学习(1) 支持向量机SVM">
 <meta name="twitter:description" content="导语做MLND项目时一直没有搞懂如何选择SVM参数，因此监督学习总结第一篇献给SVM，希望能带领大家稍稍深入理解SVM
 本篇主要解决一下问题：
 
@@ -159,7 +159,7 @@ SVM有哪几类？各自解决的问题是什么？
   <link rel="canonical" href="http://yoursite.com/2016/12/13/MLND回顾-监督学习(1）支持向量机/"/>
 
 
-  <title> MLND回顾-监督学习(1) 支持向量机 | RyannnG‘s Blog </title>
+  <title> 监督学习(1) 支持向量机SVM | RyannnG‘s Blog </title>
 </head>
 
 <body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
@@ -232,6 +232,16 @@ SVM有哪几类？各自解决的问题是什么？
         </li>
       
         
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
         <li class="menu-item menu-item-about">
           <a href="/about" rel="section">
             
@@ -258,6 +268,16 @@ SVM有哪几类？各自解决的问题是什么？
               <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
             
             标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
           </a>
         </li>
       
@@ -299,7 +319,7 @@ SVM有哪几类？各自解决的问题是什么？
             
             
               
-                MLND回顾-监督学习(1) 支持向量机
+                监督学习(1) 支持向量机SVM
               
             
           </h1>
@@ -317,6 +337,25 @@ SVM有哪几类？各自解决的问题是什么？
           </span>
 
           
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
 
           
             
@@ -333,7 +372,7 @@ SVM有哪几类？各自解决的问题是什么？
 
           
           
-             <span id="/2016/12/13/MLND回顾-监督学习(1）支持向量机/" class="leancloud_visitors" data-flag-title="MLND回顾-监督学习(1) 支持向量机">
+             <span id="/2016/12/13/MLND回顾-监督学习(1）支持向量机/" class="leancloud_visitors" data-flag-title="监督学习(1) 支持向量机SVM">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -506,9 +545,11 @@ SVM有哪几类？各自解决的问题是什么？
       
         <div class="post-tags">
           
-            <a href="/tags/机器学习/" rel="tag">#机器学习</a>
-          
             <a href="/tags/SVM/" rel="tag">#SVM</a>
+          
+            <a href="/tags/margin/" rel="tag">#margin</a>
+          
+            <a href="/tags/kernel/" rel="tag">#kernel</a>
           
         </div>
       
@@ -525,8 +566,8 @@ SVM有哪几类？各自解决的问题是什么？
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/12/16/MLND回顾-监督学习(2) 决策树/" rel="prev" title="MLND回顾-监督学习(2) 决策树">
-                MLND回顾-监督学习(2) 决策树 <i class="fa fa-chevron-right"></i>
+              <a href="/2016/12/16/MLND回顾-监督学习(2) 决策树/" rel="prev" title="监督学习(2) 决策树Decision Tree">
+                监督学习(2) 决策树Decision Tree <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -554,7 +595,7 @@ SVM有哪几类？各自解决的问题是什么？
   <div class="comments" id="comments">
     
       <div class="ds-thread" data-thread-key="2016/12/13/MLND回顾-监督学习(1）支持向量机/"
-           data-title="MLND回顾-监督学习(1) 支持向量机" data-url="http://yoursite.com/2016/12/13/MLND回顾-监督学习(1）支持向量机/">
+           data-title="监督学习(1) 支持向量机SVM" data-url="http://yoursite.com/2016/12/13/MLND回顾-监督学习(1）支持向量机/">
       </div>
     
   </div>
@@ -599,17 +640,24 @@ SVM有哪几类？各自解决的问题是什么？
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-count">4</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
 
           
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
 
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">15</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
