@@ -1,0 +1,1175 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="SVHN,ConvNet,Dropout,LRN,ReLU," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="导语识别谷歌SVHN数字是Udacity Deep Learning课程最后的项目，目的是识别谷歌街景拍到的门牌号，为以后精确定位打基础。SVHN总共包含两个数据集，一个是处理好的单数字集，和MNIST类似；还有一个是原始的图片，提供了每个数字的位置。谷歌内部是搭了8层CNN+2层全连接，准确率分别可以达到97.84%(单数字)和96.03%(数字串)。 在这个项目里我也都实现了一遍，搭了3层CN">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Street View House Numbers Recognition Using ConvNets">
+<meta property="og:url" content="http://yoursite.com/2016/12/20/Street-View-House-Numbers-Recognition-Using-ConvNets/index.html">
+<meta property="og:site_name" content="RyannnG‘s Blog">
+<meta property="og:description" content="导语识别谷歌SVHN数字是Udacity Deep Learning课程最后的项目，目的是识别谷歌街景拍到的门牌号，为以后精确定位打基础。SVHN总共包含两个数据集，一个是处理好的单数字集，和MNIST类似；还有一个是原始的图片，提供了每个数字的位置。谷歌内部是搭了8层CNN+2层全连接，准确率分别可以达到97.84%(单数字)和96.03%(数字串)。 在这个项目里我也都实现了一遍，搭了3层CN">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/006tNbRwgw1fawztmi8rdj30dj03y3yq.jpg">
+<meta property="og:image" content="http://ww2.sinaimg.cn/large/006tNbRwgw1fawztr18pej306h02pq2s.jpg">
+<meta property="og:image" content="http://ww3.sinaimg.cn/large/006tNbRwgw1fawztmh099j30ub08775u.jpg">
+<meta property="og:image" content="http://ww3.sinaimg.cn/large/006tNbRwgw1fawzu49tvvj30ex0ah0ub.jpg">
+<meta property="og:image" content="http://ww3.sinaimg.cn/large/006tNbRwgw1fawztjh2dhj302b00qmwx.jpg">
+<meta property="og:image" content="http://ww4.sinaimg.cn/large/006tNbRwgw1fawzteyem5j30fv0b0q40.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/006tNbRwgw1fawztu2d5xj308f0a5dgi.jpg">
+<meta property="og:image" content="http://ww4.sinaimg.cn/large/006tNbRwgw1fawztipoxsj30ks04yt9e.jpg">
+<meta property="og:image" content="http://ww3.sinaimg.cn/large/006tNbRwgw1fawztnysuyj307c051wex.jpg">
+<meta property="og:image" content="http://ww4.sinaimg.cn/large/006tNbRwgw1fawztndh8gj30ex04o0ss.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/006tNbRwgw1fawztshsgpj30c206bjsd.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/006tNbRwgw1fawzts5k4yj30eu066dgh.jpg">
+<meta property="og:image" content="http://ww2.sinaimg.cn/large/006tNbRwgw1fawztvtxvvj318z0d0wgg.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/006tNbRwgw1fawztkspk7j30e8096gmq.jpg">
+<meta property="og:image" content="http://ww4.sinaimg.cn/large/006tNbRwgw1fawztq64xuj30ib0d1wf8.jpg">
+<meta property="og:image" content="http://ww3.sinaimg.cn/large/006tNbRwgw1fawztpj5g9j30k00b9407.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/006tNbRwgw1fawztgstc1j30eg0ah3zj.jpg">
+<meta property="og:image" content="http://ww4.sinaimg.cn/large/006tNbRwgw1fawzthv6h5j30ex0ah3zf.jpg">
+<meta property="og:image" content="http://ww3.sinaimg.cn/large/006tNbRwgw1fawztusq8wj30cx0aagm6.jpg">
+<meta property="og:image" content="http://ww3.sinaimg.cn/large/006tNbRwgw1fawztfw78dj306k0aamy5.jpg">
+<meta property="og:updated_time" content="2016-12-20T02:06:54.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Street View House Numbers Recognition Using ConvNets">
+<meta name="twitter:description" content="导语识别谷歌SVHN数字是Udacity Deep Learning课程最后的项目，目的是识别谷歌街景拍到的门牌号，为以后精确定位打基础。SVHN总共包含两个数据集，一个是处理好的单数字集，和MNIST类似；还有一个是原始的图片，提供了每个数字的位置。谷歌内部是搭了8层CNN+2层全连接，准确率分别可以达到97.84%(单数字)和96.03%(数字串)。 在这个项目里我也都实现了一遍，搭了3层CN">
+<meta name="twitter:image" content="http://ww1.sinaimg.cn/large/006tNbRwgw1fawztmi8rdj30dj03y3yq.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Muse',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/12/20/Street-View-House-Numbers-Recognition-Using-ConvNets/"/>
+
+
+  <title> Street View House Numbers Recognition Using ConvNets | RyannnG‘s Blog </title>
+</head>
+
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?9ce3d6f1a43cd6ef9f9eddadd0c72220";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">RyannnG‘s Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Street View House Numbers Recognition Using ConvNets
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-12-20T09:52:25+08:00" content="2016-12-20">
+              2016-12-20
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/深度学习/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/12/20/Street-View-House-Numbers-Recognition-Using-ConvNets/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/20/Street-View-House-Numbers-Recognition-Using-ConvNets/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/12/20/Street-View-House-Numbers-Recognition-Using-ConvNets/" class="leancloud_visitors" data-flag-title="Street View House Numbers Recognition Using ConvNets">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="导语"><a href="#导语" class="headerlink" title="导语"></a>导语</h2><p>识别谷歌SVHN数字是<a href="https://cn.udacity.com/course/deep-learning--ud730" target="_blank" rel="external">Udacity Deep Learning</a>课程最后的项目，目的是识别谷歌街景拍到的门牌号，为以后精确定位打基础。SVHN总共包含两个数据集，一个是处理好的单数字集，和MNIST类似；还有一个是原始的图片，提供了每个数字的位置。谷歌内部是搭了8层CNN+2层全连接，准确率分别可以达到97.84%(单数字)和96.03%(数字串)。 在这个项目里我也都实现了一遍，搭了3层CNN+2层全连接，单数字集准确率可以达到92.3%，数字串的就只有75.9%了。 因为全部训练和测试过程都是在2015款Macbook Air上跑的，框架用的是Tensorflow CPU版，训练过程非常慢而且占用内存很多，导致了无法再增加CNN层数，所以数字串识别的准确率上不去。总的来说还有很大改进的空间，具体代码可见我的<a href="https://github.com/RyannnG/Capstone-Google-SVHN-Digits-Recognition" target="_blank" rel="external">Github repo</a></p>
+<a id="more"></a>
+<h2 id="Ⅰ-Definition"><a href="#Ⅰ-Definition" class="headerlink" title="Ⅰ. Definition"></a>Ⅰ. Definition</h2><h3 id="1-Overview"><a href="#1-Overview" class="headerlink" title="1. Overview"></a>1. Overview</h3><p><a href="http://ufldl.stanford.edu/housenumbers/" target="_blank" rel="external">Street View House Numbers</a> is a real-world image dataset for developing machine learning and object recognition algorithms with minimal requirement on data preprocessing and formatting. The dataset contains over 600,000 labeled digits cropped from street level photos. The ability to automatically transcribe those address number from a geo-located patch of pixels and associate the transcribed number with a known street address helps pinpoint the location of the building it represents.</p>
+<p>The problem of recognizing characters in images has been extensively studied in the last few decades. For instance, the MNIST digit dataset has been thoroughly addressed with algorithms approaching perfect performance. However, the MNIST dataset is venerable. With rapid advances in mobile phone cameras and computation capabilities, the more difficult problem of recognizing and understanding scene test is receiving increased attention. </p>
+<p>Traditional approaches to recognizing arbitrary multi-digits numbers typically seperate out the localization, segmentation, and recognition steps. In this project, I built a 5-layer convolutional neural network, and focus on recognizing multiple digits simultaneously without segmentation. The model achieves 84.8% accuracy on character-level recognition and 74.5% accuracy on sequence level recognition in original images. With little adjustment, the model achieves 92.1% accuracy on cropped digits recognition. Thus this mode can be applied to individual character recognition or sequence recognition with limited length such as car license plates recognition. </p>
+<h3 id="2-Problem-Statement"><a href="#2-Problem-Statement" class="headerlink" title="2. Problem Statement"></a>2. Problem Statement</h3><p>There are two types of dataset are provided. One is MNIST-like individual digits. The other is original images with character level bounding boxes. In this project, I mainly focus on recognizing the sequence on the original images which the model is built for. </p>
+<p><em>Figure 1a. samples of individual digits</em></p>
+<p><img src="http://ww1.sinaimg.cn/large/006tNbRwgw1fawztmi8rdj30dj03y3yq.jpg" alt="屏幕快照 2016-11-28 13.51.16"></p>
+<p>Street number transcription is a special kind of sequence recognition. It is obvious that digit recognition is much simpler than fully general object classification. There are only 10 classes we need consider. So the problem will be how do we recognize the digits as a sequence. Given an image, the task is to identify the number in the image. The number to be identified is a sequence of digits, $s = s_1, s_2, \dots , s_n$ . </p>
+<p><em>Figure 1b. sample of one original image</em> </p>
+<p><img src="http://ww2.sinaimg.cn/large/006tNbRwgw1fawztr18pej306h02pq2s.jpg" alt="29915"></p>
+<p>Our basic approach is to train a probabilistic model of each digit then combine them to a sequence. Let $S$ represents the sequence in the given image $X$ and $s_i$ is the $i$th digit in the sequence. Each of the digit variable $s_i$ has 10 possible values. This means it is feasible to represent each of them with a softmax classifier that receives as input features extracted from $X$ by a convolutional neural network.</p>
+<p>At test time, we predict </p>
+<script type="math/tex; mode=display">S = (s_1,\dots, s_5) =  (argmax P(S_1=s_1|X), \dots, argmax P(S_5 = s_5|X ))</script><p>The argmax for each character is computed independently.</p>
+<h3 id="3-Metrics"><a href="#3-Metrics" class="headerlink" title="3. Metrics"></a>3. Metrics</h3><p>The labels in this project are both digits and there are no irreverent class in the images. So accuracy would be the sufficient metric for this project. When determining the accuracy of the digit transcriber, there two forms of metrics I use in this project. </p>
+<p>Firstly, due to the characteristics of the model I built, which recognize the digits separately then combine them to a sequence, it’s important to know how well of each digit is recognized. So I need calculate the single character recognition accuracy, which is defined as <code>def accuracy_single()</code> .</p>
+<p>​                           <script type="math/tex">character\ accuracy =  \frac{\sum single\ digit\ recognize\ correctly}{\#\ total\ digits\ in\ the\ dataset} \times 100\%</script>  </p>
+<p>Secondly, as a sequence, one mistaken recognition may make a huge difference in understanding them in some application. Thus, I compute the proportion of the input images for which the length n of the sequence and every element $s_i$ of the sequence is predicted correctly. This accuracy function is defined as <code>def accuracy_multi()</code> </p>
+<p>$Let\ I_i = indicator\ of\ the\ ith\ image\ recognized\ correctly $ </p>
+<p>​                                                   <script type="math/tex">sequence\ accuracy = \frac{\sum_1^n {I_i}}{n} \times 100\%</script></p>
+<h2 id="Ⅱ-Analysis"><a href="#Ⅱ-Analysis" class="headerlink" title="Ⅱ. Analysis"></a>Ⅱ. Analysis</h2><h3 id="1-Data-Exploration"><a href="#1-Data-Exploration" class="headerlink" title="1. Data Exploration"></a>1. Data Exploration</h3><p>The SVHN dataset is a dataset of about 200K street numbers, along with bounding boxes for individual digits. The dataset is in two format, one is of original images, the other is MNIST-like 32-by-32 images centered around a single character. Since our goal is to recognize the multiple digits simultaneously. So the following dataset all refers to the original ones. </p>
+<p><em>Figure 2. images with bounding box</em></p>
+<p><img src="http://ww3.sinaimg.cn/large/006tNbRwgw1fawztmh099j30ub08775u.jpg" alt="Figure 1"></p>
+<p>The original-formatted dataset is divided into three subsets: train set, extra set and test set. Each set contains the original images in png format with 3 color channels, together with a digitStruct.mat file. The digitStruct.mat file contains a struct called digitStruct with the same length as the number of original images. Each element in digitStruct has the following fields: name which is a string containing the filename of the corresponding image. bbox which is a struct array that contains the position, size and label of each digit bounding box in the image. Eg: digitStruct(300).bbox(2).height gives height of the 2nd digit bounding box in the 300th image. </p>
+<p><em>Table 1. Train and test dataset</em></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Number of images</th>
+<th>Number of digits</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>train.tar</strong></td>
+<td>33402</td>
+<td>73257</td>
+</tr>
+<tr>
+<td><strong>test.tar</strong></td>
+<td>13068</td>
+<td>26032</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The size of images is show in Figure 3. The size of images in the train set is not uniformly distributed nor is the test set. The width of the image in the dataset ranges from 25 to 1083. Also, we can see that images in the test set are a bit larger than that in the train set. However, we don’t need remove those outliers, since all the images will be cropped and resize to $32\times 32$  in the preprocessing stage according to bounding box given the dataset.</p>
+<p><em>Figure 3. sizes of train and test dataset</em></p>
+<p><img src="http://ww3.sinaimg.cn/large/006tNbRwgw1fawzu49tvvj30ex0ah0ub.jpg" alt="imsize"></p>
+<p><em>Table 2. sizes of images in train and test dataset</em></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Size (pixels)</th>
+<th>mean</th>
+<th>median</th>
+<th>max</th>
+<th>min</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>train height</td>
+<td>57.2</td>
+<td>47</td>
+<td>501</td>
+<td>12</td>
+</tr>
+<tr>
+<td>train width</td>
+<td>128.2</td>
+<td>104</td>
+<td>876</td>
+<td>25</td>
+</tr>
+<tr>
+<td>test height</td>
+<td>71.5</td>
+<td>53</td>
+<td>516</td>
+<td>13</td>
+</tr>
+<tr>
+<td>test width</td>
+<td>172.5</td>
+<td>132</td>
+<td>1083</td>
+<td>31</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Another special property of the street number transcription problem is that the sequences are of bounded length. The length ranges from 1 to 6, Actually there is only one image containing more than 5 digits in the train and test dataset. So we remove it from the dataset.</p>
+<p><em>Figure 4.  image with 6 digits</em></p>
+<p><img src="http://ww3.sinaimg.cn/large/006tNbRwgw1fawztjh2dhj302b00qmwx.jpg" alt="29915"></p>
+<p><em>Figure 5. Distribution of digits in images</em></p>
+<p><img src="http://ww4.sinaimg.cn/large/006tNbRwgw1fawzteyem5j30fv0b0q40.jpg" alt="屏幕快照 2016-11-23 14.33.40"></p>
+<p>As shown in Figure 5. The distribution of each digit is imbalanced. The frequency of ( 1,2,3) is apparently higher than other digits. However, the test dataset preserves same imbalances. </p>
+<h3 id="2-Algorithms-and-Techniques"><a href="#2-Algorithms-and-Techniques" class="headerlink" title="2. Algorithms and Techniques"></a>2. Algorithms and Techniques</h3><p>The general literature on image understanding is vast. Object classification and detection has been driven by many large scale visual recognition challenge such as ImageNet. Various model and methods have been used in both research and industrial work. Here I focus on reviewing the techniques that either have been the major component of the model or help reduce training time and improve accuracy.</p>
+<h5 id="Convolution-Neural-Network"><a href="#Convolution-Neural-Network" class="headerlink" title="Convolution Neural Network"></a>Convolution Neural Network</h5><p>Artificial Neural Network(ANN) is a computing system made up of a number of simple, highly interconnected processing elements, which process information by their dynamic state response to external inputs, which typically organized in layers. In a fully connected layer each neuron is connected to every neuron in the previous layer, and each connection has its own weight. This makes no assumptions about the features in the data. It’s also very expensive in terms of memory (weights) and computation (connections).</p>
+<p><em>Figure 6. Neural Networks</em></p>
+<p><img src="http://ww1.sinaimg.cn/large/006tNbRwgw1fawztu2d5xj308f0a5dgi.jpg" alt="屏幕快照 2016-11-28 01.58.48"></p>
+<p>Convolutional Neural Network(CNN or ConvNets) is one type of the ANNs, and has proven very effective in areas such as image recognition and classification. In a convolutional layer each neuron is only connected to a few nearby neurons in the previous layer, and the same set of weights is used for every neuron.  This connection pattern only makes sense for cases where the data can be interpreted as spatial with the features to be extracted being spatially local and equally likely to occur at any input position.</p>
+<p><em>Figure 7. A simple ConvNet</em></p>
+<p><img src="http://ww4.sinaimg.cn/large/006tNbRwgw1fawztipoxsj30ks04yt9e.jpg" alt="conv"></p>
+<p>For images, CNNs have repetitive blocks of neurons that are applied across space, these blocks of neurons can be interpreted as 2D convolutional kernels, repeatedly applied over each patch of the image. In one convolution layer, as shown in Figure 8, the yellow $3\times 3$ matrix is called ‘filter’ or ‘kernel’ and the matrix formed by sliding the filter over the image and computing the dot product is called the ‘Convolved Feature’ or ‘Feature Map’. We compute element wise multiplication between the filter matrix and the image matrix and add the multiplication outputs to get the final integer which forms the output feature map.</p>
+<p><em>Figure 8. Convolution kernel and feature map</em></p>
+<p><img src="http://ww3.sinaimg.cn/large/006tNbRwgw1fawztnysuyj307c051wex.jpg" alt="屏幕快照 2016-11-28 02.08.03"></p>
+<h5 id="ReLu"><a href="#ReLu" class="headerlink" title="ReLu"></a>ReLu</h5><p>ReLU is the abbreviation of Rectified Linear Units. This is a layer of neurons that applies the non-saturating activation function $ f(x)=\max(0,x)$. It increases the nonlinear properties of the decision function and of the overall network without affecting the receptive fields of the convolution layer. Other non linear functions such as $tanh$ or $sigmoid$ can also be used instead of ReLU, but ReLU has been found to perform better in most situations.</p>
+<p><em>Figure 9. ReLu function</em></p>
+<p><img src="http://ww4.sinaimg.cn/large/006tNbRwgw1fawztndh8gj30ex04o0ss.jpg" alt="relu"></p>
+<h5 id="Local-Response-Normalization"><a href="#Local-Response-Normalization" class="headerlink" title="Local Response Normalization"></a>Local Response Normalization</h5><p>In neurobiology, there is a concept called “lateral inhibition”. This refers to the capacity of an excited neuron to subdue its neighbors. We basically want a significant peak so that we have a form of local maxima. Local Response Normalization (LRN) layer implements the lateral inhibition in the CNN layers.</p>
+<p>Denoting by $a<em>{x,y}^i$$$ the activity of a neuron computed by applying kernel $i$ at position $(x,y)$ and then applying the ReLU nonlinearity, the response-normalized activity $b</em>{x,y}^i$ is given by the expression</p>
+<script type="math/tex; mode=display">b_{x,y}^i = a_{x,y}^i/(k + \alpha \sum_{j=max(0, i-n/2)}^{min(N-1, i+n/2)} (a_{x,y}^j)^2)^{\beta}</script><p>where the sum runs over $n$ “adjacent” kernel maps at the same spatial position, and $N$ is the total number of kernels in the layer. </p>
+<p>Response normalization reduces our single digit and sequence recognition error rates by 0.9% and 0.7%, respectively.    </p>
+<h5 id="Dropout"><a href="#Dropout" class="headerlink" title="Dropout"></a>Dropout</h5><p><em>Figure 9. dropout</em></p>
+<p>​<br>​       <img src="http://ww1.sinaimg.cn/large/006tNbRwgw1fawztshsgpj30c206bjsd.jpg" alt="屏幕快照 2016-11-26 00.43.29"><br>​<br>“Dropout” consists of setting to zero the output of each hidden neuron with probability 0.5. The neurons which are “dropped out” in this way do not contribute to the forward pass and do not participate in back-propagation. So every time an input is presented, the neural network samples a different architecture, but all these architectures share weights. This technique reduces complex co-adaptations of neurons, since a neuron cannot rely on the presence of particular other neurons. It is, therefore, forced to learn more robust features that are useful in conjunction with many different random subsets of the other neurons.    </p>
+<p>Without dropout, my network exhibits substantial overfitting. Applying dropout gives me roughly 5% accuracy improvement on character-level recognition and 7% improvement on sequence-level recognition.</p>
+<h5 id="Adam-Optimization"><a href="#Adam-Optimization" class="headerlink" title="Adam Optimization"></a>Adam Optimization</h5><p>Adam is a method for efficient stochastic optimization that only requires first-order gradients with little memory requirement. The method computes individual adaptive learning rates for different parameters from estimates of first and second moments of the gradients. Adam combines the advantages of two popular methods: AdaGrad , which works well with sparse gradients, and RMSProp, which works well in on-line and non-stationary settings. Some of Adam’s advantages are that the magnitudes of parameter updates are invariant to rescaling of the gradient, its stepsizes are approximately bounded by the stepsize hyper-parameter, it does not require a stationary objective, it works with sparse gradients, and it naturally performs a form of step size annealing.  </p>
+<h3 id="3-Benchmarks"><a href="#3-Benchmarks" class="headerlink" title="3. Benchmarks"></a>3. Benchmarks</h3><p>Human performance on sequence-level recognition reaches 98%. And the state-of-art of sequence transcription accuracy is 96.03%. The model is built by Goodefellow $et\ al$. Their model also achieves a character-level accuracy of 97.84%. However, the parameters of their model is so large that it took them 6 days to train the model. </p>
+<p>Apparently, the MacBook I use couldn’t bear such computational task and the number of parameters must be reduced due to the 8G RAM. The threshold I set for this project is to reach 80% -85% accuracy on sequence transcription and 90% accuracy on character-level recognition on which level people may find it useful when transcribing the digits automatically.  </p>
+<h2 id="Ⅲ-Methodology"><a href="#Ⅲ-Methodology" class="headerlink" title="Ⅲ. Methodology"></a>Ⅲ. Methodology</h2><h3 id="1-Preprocess"><a href="#1-Preprocess" class="headerlink" title="1. Preprocess"></a>1. Preprocess</h3><h4 id="1-Dataset-composition"><a href="#1-Dataset-composition" class="headerlink" title="1. Dataset composition"></a>1. Dataset composition</h4><p>Since there are given no information about how the sampling of these images was done. I compose the validation set from the randomized training samples, yielding 6000 samples.</p>
+<p><em>Table 3. train, test and validation dataset</em> </p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>sample count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>train_dataset</strong></td>
+<td>27401</td>
+</tr>
+<tr>
+<td><strong>test_dataset</strong></td>
+<td>13068</td>
+</tr>
+<tr>
+<td><strong>valid_dataset</strong></td>
+<td>6000</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><em>Figure 5. Distribution of sequence length in each dataset</em></p>
+<p><img src="http://ww1.sinaimg.cn/large/006tNbRwgw1fawzts5k4yj30eu066dgh.jpg" alt="length"></p>
+<p><em>Figure 6. Distribution of digits count in each dataset</em></p>
+<p><img src="http://ww2.sinaimg.cn/large/006tNbRwgw1fawztvtxvvj318z0d0wgg.jpg" alt="numbers"></p>
+<h4 id="2-Reshape-amp-Normalization"><a href="#2-Reshape-amp-Normalization" class="headerlink" title="2. Reshape &amp; Normalization"></a>2. Reshape &amp; Normalization</h4><p>I preprocess the dataset in two aspects. </p>
+<p>First, I find the small rectangular bounding box boundaries by reading the digitStruct.mat. I then crop the original images to remove redundant information. Therefore, the size of images is reduced. After cropping, I resize the images to $32\times 32$ for computational convenience.</p>
+<p>Second, unlike the MNIST dataset, the SVHN dataset comes from the real world image, which has 3 color channels. Our goal is to recognize the digits, so the color doesn’t matter. I first convert the images to greyscale, then subtract the mean of each image and divide by its standard deviation. The image information is stored into numpy ndarray.</p>
+<p><em>Figure 10. images after normalization (10 stands for none)</em></p>
+<p><img src="http://ww1.sinaimg.cn/large/006tNbRwgw1fawztkspk7j30e8096gmq.jpg" alt="multi_pre"></p>
+<h3 id="2-Implementation"><a href="#2-Implementation" class="headerlink" title="2. Implementation"></a>2. Implementation</h3><p><em>Figure 11. Architecture</em></p>
+<p><img src="http://ww4.sinaimg.cn/large/006tNbRwgw1fawztq64xuj30ib0d1wf8.jpg" alt="屏幕快照 2016-11-25 21.12.10"></p>
+<p>The base ConvNet architecture is composed of three repeatedly stacked feature stages and one fully connected hidden layer, and five locally connected layers for recognizing each digit. Each convolution stage contains a convolution module, followed by a rectified module and a max-pooling module. </p>
+<p>All convolution kernels are of size $5\times 5  $ . The first convolution layer produces 16 features convolution filters, while the second and third convolution layers output 32 and 64 features. All convolution layers use zero padding and zero stride on the input so that the representation size remains the same. All the max pooling window size is $2\times 2$ with a stride $2\times 2$ . The fully connected layer contains 1024 nodes each. </p>
+<p>I trained with dropout applied to the fully connected hidden layer. Adam optimizer is used for stochastic optimization. Regularization constant, learning rate were both tuned to 0.001.</p>
+<p>Each the input training batch contains 64 images in size of $32\times 32$ with 1 color channel. It normally takes 20,000 steps for training the model.</p>
+<h3 id="3-Refinement"><a href="#3-Refinement" class="headerlink" title="3. Refinement"></a>3. Refinement</h3><p>There are many techniques for refinement and many hyper-parameters need to be tuned. To do a grid search on deep neural network will cost huge amount of effort and time. The refinement approach I adopted is observing the loss and accuracy on validation set and then decide which approach may improve the accuracy on test dataset.</p>
+<p>The base model contains 3 ConvNet each followed by a max-pooling layer and 1 fully connected layer followed by 5 locally connected layers.  Dropout is only applied on fully connected layer with value of 0.9375.  </p>
+<p>I mainly adjust the model in 3 ways: </p>
+<ol>
+<li>Add/remove one layer</li>
+<li>Increase/decrease the number of hidden units </li>
+<li>Change the probability in dropout </li>
+</ol>
+<p><em>Figure 12. Architect evolution</em></p>
+<p><img src="http://ww3.sinaimg.cn/large/006tNbRwgw1fawztpj5g9j30k00b9407.jpg" alt="幻灯片1"></p>
+<h2 id="Ⅳ-Results"><a href="#Ⅳ-Results" class="headerlink" title="Ⅳ. Results"></a>Ⅳ. Results</h2><h3 id="1-Model-Evaluation-and-Validation"><a href="#1-Model-Evaluation-and-Validation" class="headerlink" title="1. Model Evaluation and Validation"></a>1. Model Evaluation and Validation</h3><p><em>Table 4. Model Accuracy</em></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Accuracy_single</th>
+<th>Accuracy_multi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Base model</td>
+<td>77.8%</td>
+<td>63.4%</td>
+</tr>
+<tr>
+<td>Model v1</td>
+<td>82.3%</td>
+<td>71.5%</td>
+</tr>
+<tr>
+<td>Model v2</td>
+<td>82.2%</td>
+<td>72.2%</td>
+</tr>
+<tr>
+<td>Model v3</td>
+<td>84.8%</td>
+<td>75.9%</td>
+</tr>
+<tr>
+<td>Model v3 (on single digit dataset)</td>
+<td>92.3%</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>On comparing these four models, we can notice that whenever we change the dropout value or add a dropout layer, there will be a leaping growth on final accuracy. Figure 13a shows the loss of train predictions  at each epoch of model v2 and v3,  and Figure 13b shows the validation error corresponding to those loss. The loss of Model v2 is always smaller than that of Model v3 in the same epoch showing that v2 performs better than v3 on training dataset. However, the validation error of Model v2 is greater than that of Model v3, which indicates that Model v3 is better generalized. Reducing the dropout rate or adding dropout layers helps avoid overfitting on the training dataset and makes the Model v3 more robust.</p>
+<p><em>Figure 13a. Train prediction loss of Model v2 and v3</em></p>
+<p><img src="http://ww1.sinaimg.cn/large/006tNbRwgw1fawztgstc1j30eg0ah3zj.jpg" alt="loss"></p>
+<p><em>Figure 13b. Validation error of Model v2 and v3</em></p>
+<p><img src="http://ww4.sinaimg.cn/large/006tNbRwgw1fawzthv6h5j30ex0ah3zf.jpg" alt="valid"></p>
+<p>After several turns of refinement, Model v3 achieves 84.8% accuracy on individual digits recognition and 75.9% accuracy on sequence recognition on the original images.  As shown in Figure 12 , this model contains three ConvNets stage and 2 fully connected layers. Each ConvNet stage contains a local response normalization layer, a max-pooling layer. And dropout layers are added to all layers except the input layer. Specific parameters are listed in Table .</p>
+<p><em>Table 5a. Model v3 parameters</em></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Filter</th>
+<th>Stride</th>
+<th>Depth</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>conv_1</td>
+<td>$5\times 5$</td>
+<td>$1\times 1$</td>
+<td>16</td>
+<td>$32\times 32 \times 16$</td>
+</tr>
+<tr>
+<td>max_pool</td>
+<td>$2\times 2$</td>
+<td>$2\times 2$</td>
+<td>16</td>
+<td>$16\times 16 \times 16$</td>
+</tr>
+<tr>
+<td>conv_2</td>
+<td>$5\times 5$</td>
+<td>$1\times 1$</td>
+<td>32</td>
+<td>$16\times 16 \times 32$</td>
+</tr>
+<tr>
+<td>max_pool</td>
+<td>$2\times 2$</td>
+<td>$2\times 2$</td>
+<td>32</td>
+<td>$8\times 8 \times 32$</td>
+</tr>
+<tr>
+<td>conv_3</td>
+<td>$5\times 5$</td>
+<td>$1\times 1$</td>
+<td>64</td>
+<td>$8\times 8 \times 32$</td>
+</tr>
+<tr>
+<td>max_pool</td>
+<td>$2\times 2$</td>
+<td>$2\times 2$</td>
+<td>64</td>
+<td>$4\times 4 \times 64$</td>
+</tr>
+<tr>
+<td>Fully connect</td>
+<td></td>
+<td></td>
+<td></td>
+<td>$1024\times 1024$</td>
+</tr>
+<tr>
+<td>Output</td>
+<td></td>
+<td></td>
+<td></td>
+<td>$1024\times 11$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><em>Table 5b. Model v3 parameters</em></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Other parameters</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dropout(on ConvNet)</td>
+<td>0.8</td>
+</tr>
+<tr>
+<td>Dropout(on FC)</td>
+<td>0.5</td>
+</tr>
+<tr>
+<td>learning rate</td>
+<td>0.001</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>In addition, I reduced the number of hidden units in Model v3 then applied it on the less difficult individual digit dataset. It achieves 92.1% accuracy on recognizing single digits.</p>
+<h3 id="2-Justification"><a href="#2-Justification" class="headerlink" title="2. Justification"></a>2. Justification</h3><p>The best model I built so far reaches 75.9%, while the human’s performance on this dataset reaches 98% accuracy. Comparing to threshold this is not accurate enough for transcribing sequence digits in real world. However, when using the MNIST-like dataset,  I reached 92.1% accuracy on recognizing individual digits. I think this implementation is an adequate solution to recognizing single digit in real world.</p>
+<h2 id="Ⅴ-Conclusion"><a href="#Ⅴ-Conclusion" class="headerlink" title="Ⅴ. Conclusion"></a>Ⅴ. Conclusion</h2><h3 id="1-Reflection"><a href="#1-Reflection" class="headerlink" title="1. Reflection"></a>1. Reflection</h3><p>In this project, we first crop the images according to the given boundary information then normalize them to mitigate the variation of each image. Then the 5-layer convolution neural networks do the segmentation and localization of ordered sequences of object simultaneously. It taking the preprocessed images as input outputs the possible values of each digits. Those predicted digits form up the sequence in the image.  Similar procedures could be implemented in real world applications for recognizing digits sequence. </p>
+<p><em>Figure 14. correctly classified image</em></p>
+<p><img src="http://ww3.sinaimg.cn/large/006tNbRwgw1fawztusq8wj30cx0aagm6.jpg" alt="corr"> </p>
+<p>However, one drawback of this model is that our approach is trained fully supervised only, and we use the digits’ boundaries in the preprocess stage to remove redundant information. Without these boundaries and preprocess, the street view numbers recognition accuracy may decrease a lot. As shown in Figure 15, when dealing with ill-forms of street numbers, it’s difficult for the model predicting correctly. </p>
+<p><em>Figure 15. misclassified image</em> </p>
+<p><img src="http://ww3.sinaimg.cn/large/006tNbRwgw1fawztfw78dj306k0aamy5.jpg" alt="mis"></p>
+<p>Yet, one interesting but also difficult part of this project is tuning hyper-parameters. With a little adjustment, the accuracy of the model change significantly. Finding the best combination of hypermeter definitely require many experiments and deep understanding the convolutional neural networks. </p>
+<h3 id="2-Improvement"><a href="#2-Improvement" class="headerlink" title="2. Improvement"></a>2. Improvement</h3><p>Due to the Mac’s computational limitation, the training process is too long and I couldn’t add more hidden layers or units. For further accuracy improvement, we can add more hidden layers by using faster processors of GPUs.</p>
+<p>On the other hand, in the preprocess step I reshape the image to $32\times 32$ format. However, there are many images of higher resolution in the dataset . And in real world, the digital camera contains more and more pixels. Thus, a training model that could process larger image size need implementing when we want to build an end-to-end transcriber in application.</p>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
+<li><p>SVHN dataset: <a href="http://ufldl.stanford.edu/housenumbers" target="_blank" rel="external">http://ufldl.stanford.edu/housenumbers</a></p>
+</li>
+<li><p>Yuval Netzer, Tao Wang, Adam Coates, Alessandro Bissacco, Bo Wu, Andrew Y. Ng <em>Reading Digits in Natural Images with Unsupervised Feature Learning</em>  <em>NIPS Workshop on Deep Learning and Unsupervised Feature Learning 2011</em>. (<a href="http://ufldl.stanford.edu/housenumbers/nips2011_housenumbers.pdf" target="_blank" rel="external">PDF</a>)</p>
+</li>
+<li><p>Pierre Sermanet, Soumith Chintala, Yann LeCun <em>Convolutional Neural Networks Applied to House Numbers Digit Classification</em></p>
+</li>
+<li><p>Diederik P. Kingma,Jimmy Lei Ba <em>ADAM- A METHOD FOR STOCHASTIC OPTIMIZATION</em></p>
+</li>
+<li><p>Ian J. Goodfellow, Yaroslav Bulatov, Julian Ibarz, Sacha Arnoud, Vinay Shet <em>Multi-digit Number Recognition from Street View Imagery using Deep Convolutional Neural Networks</em></p>
+</li>
+<li><p>G.E. Hinton, N. Srivastava, A. Krizhevsky, I. Sutskever, and R.R. Salakhutdinov. <em>Improving neural net-works by preventing co-adaptation of feature detectors.</em></p>
+</li>
+<li><p>Nitish Srivastava, Geoffrey Hinton, Alex Krizhevsky,Ilya Sutskever, Ruslan Salakhutdinov  <em>Dropout: A Simple Way to Prevent Neural Networks from Overfitting</em></p>
+</li>
+<li><p>Alex Krizhevsky, Ilya Sutskever, Geoffrey E. Hinton <em>ImageNet Classification with Deep Convolutional Neural Networks</em></p>
+</li>
+<li><p>Matthew Earl  <em>Number plate recognition with Tensorflow</em></p>
+</li>
+<li><p><a href="https://en.wikipedia.org/wiki/Convolutional_neural_network" target="_blank" rel="external">https://en.wikipedia.org/wiki/Convolutional_neural_network</a></p>
+</li>
+<li><p><a href="http://pages.cs.wisc.edu/~bolo/shipyard/neural/local.html" target="_blank" rel="external">A Basic Introduction To Neural Networks</a></p>
+</li>
+<li><p><a href="https://www.reddit.com/r/MachineLearning/comments/3yy7ko/what_is_the_difference_between_a_fullyconnected/" target="_blank" rel="external">https://www.reddit.com/r/MachineLearning/comments/3yy7ko/what_is_the_difference_between_a_fullyconnected/</a></p>
+</li>
+<li><p><a href="http://deeplearning.stanford.edu/wiki/index.php/Feature_extraction_using_convolution" target="_blank" rel="external">Feature extraction using convolution</a></p>
+<p>​</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/SVHN/" rel="tag">#SVHN</a>
+          
+            <a href="/tags/ConvNet/" rel="tag">#ConvNet</a>
+          
+            <a href="/tags/Dropout/" rel="tag">#Dropout</a>
+          
+            <a href="/tags/LRN/" rel="tag">#LRN</a>
+          
+            <a href="/tags/ReLU/" rel="tag">#ReLU</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/19/监督学习-3-Ensemble-AdaBoost/" rel="next" title="监督学习(3) Ensemble: AdaBoost">
+                <i class="fa fa-chevron-left"></i> 监督学习(3) Ensemble: AdaBoost
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/12/20/Street-View-House-Numbers-Recognition-Using-ConvNets/"
+           data-title="Street View House Numbers Recognition Using ConvNets" data-url="http://yoursite.com/2016/12/20/Street-View-House-Numbers-Recognition-Using-ConvNets/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://lh3.googleusercontent.com/6POt0fuwceChcfDeOgRxpoDXWwKYyS4knFg1Nw2-oTyWLLeFrtJ1cxpxLY1eug42vmS_pox3Ng=w1440-h900-rw-no"
+               alt="RyannnG" />
+          <p class="site-author-name" itemprop="name">RyannnG</p>
+          <p class="site-description motion-element" itemprop="description">Less is More</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/RyannnG" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/thecolorofdreams" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#导语"><span class="nav-number">1.</span> <span class="nav-text">导语</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ⅰ-Definition"><span class="nav-number">2.</span> <span class="nav-text">Ⅰ. Definition</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Overview"><span class="nav-number">2.1.</span> <span class="nav-text">1. Overview</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Problem-Statement"><span class="nav-number">2.2.</span> <span class="nav-text">2. Problem Statement</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Metrics"><span class="nav-number">2.3.</span> <span class="nav-text">3. Metrics</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ⅱ-Analysis"><span class="nav-number">3.</span> <span class="nav-text">Ⅱ. Analysis</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Data-Exploration"><span class="nav-number">3.1.</span> <span class="nav-text">1. Data Exploration</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Algorithms-and-Techniques"><span class="nav-number">3.2.</span> <span class="nav-text">2. Algorithms and Techniques</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Convolution-Neural-Network"><span class="nav-number">3.2.0.1.</span> <span class="nav-text">Convolution Neural Network</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ReLu"><span class="nav-number">3.2.0.2.</span> <span class="nav-text">ReLu</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Local-Response-Normalization"><span class="nav-number">3.2.0.3.</span> <span class="nav-text">Local Response Normalization</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Dropout"><span class="nav-number">3.2.0.4.</span> <span class="nav-text">Dropout</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Adam-Optimization"><span class="nav-number">3.2.0.5.</span> <span class="nav-text">Adam Optimization</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Benchmarks"><span class="nav-number">3.3.</span> <span class="nav-text">3. Benchmarks</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ⅲ-Methodology"><span class="nav-number">4.</span> <span class="nav-text">Ⅲ. Methodology</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Preprocess"><span class="nav-number">4.1.</span> <span class="nav-text">1. Preprocess</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-Dataset-composition"><span class="nav-number">4.1.1.</span> <span class="nav-text">1. Dataset composition</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-Reshape-amp-Normalization"><span class="nav-number">4.1.2.</span> <span class="nav-text">2. Reshape & Normalization</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Implementation"><span class="nav-number">4.2.</span> <span class="nav-text">2. Implementation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Refinement"><span class="nav-number">4.3.</span> <span class="nav-text">3. Refinement</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ⅳ-Results"><span class="nav-number">5.</span> <span class="nav-text">Ⅳ. Results</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Model-Evaluation-and-Validation"><span class="nav-number">5.1.</span> <span class="nav-text">1. Model Evaluation and Validation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Justification"><span class="nav-number">5.2.</span> <span class="nav-text">2. Justification</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ⅴ-Conclusion"><span class="nav-number">6.</span> <span class="nav-text">Ⅴ. Conclusion</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Reflection"><span class="nav-number">6.1.</span> <span class="nav-text">1. Reflection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Improvement"><span class="nav-number">6.2.</span> <span class="nav-text">2. Improvement</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">7.</span> <span class="nav-text">References</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">RyannnG</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"iissnan-notes"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+  <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("10GpSWeSUn01nDwu9s30OGk7-gzGzoHsz", "0x4MYwv9Hx6LbpMrJu8xTx6f");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+</body>
+</html>
