@@ -121,7 +121,7 @@ SVM有哪几类？各自解决的问题是什么？
 <meta property="og:image" content="http://ww3.sinaimg.cn/large/006tNbRwgw1faoubck6z7j30v20htmzp.jpg">
 <meta property="og:image" content="http://images.slideplayer.com/24/7016025/slides/slide_61.jpg">
 <meta property="og:image" content="https://i.stack.imgur.com/jCUj2.png">
-<meta property="og:updated_time" content="2016-12-19T02:37:05.000Z">
+<meta property="og:updated_time" content="2016-12-22T07:07:38.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="监督学习(1) 支持向量机SVM">
 <meta name="twitter:description" content="导语做MLND项目时一直没有搞懂如何选择SVM参数，因此监督学习总结第一篇献给SVM，希望能带领大家稍稍深入理解SVM
@@ -441,7 +441,7 @@ SVM有哪几类？各自解决的问题是什么？
 <script type="math/tex; mode=display">w^* = \sum_i \alpha_i^*y_i x_i</script><script type="math/tex; mode=display">b^* = y_i - \sum_i \alpha_i^*y_i x_i</script><p>因此分隔超平面可以写成</p>
 <script type="math/tex; mode=display">w^T x + b =  \sum_{i=1}^N \alpha_i^*y_i \langle x_i,x \rangle + b^*</script><p>其中$\langle x_i,x \rangle$ 表示向量内积，等同于$x_i^Tx$</p>
 <h3 id="软间隔Soft-Margin"><a href="#软间隔Soft-Margin" class="headerlink" title="软间隔Soft Margin"></a>软间隔Soft Margin</h3><p>上述讨论都是在数据点线性可分情况下进行的。我们将上述间隔称为硬间隔。</p>
-<p>现实生活中，有很多数据是没有办法一刀切开的。如下图所示，无论分隔线放在哪里，都不可能将蓝点和红点完全分开。即无法满足函数间隔大于等于1的约束条件。这时我们该如何定义最个间隔并找出对偶优化问题呢？</p>
+<p>现实生活中，有很多数据是没有办法一刀切开的。如下图所示，无论分隔线放在哪里，都不可能将蓝点和红点完全分开。即无法满足函数间隔大于等于1的约束条件。这时我们该如何定义最大间隔并找出对偶优化问题呢？</p>
 <p><img src="http://image.slidesharecdn.com/eventclassificationpredictionusingsupportvectormachine-160405104743/95/event-classification-prediction-using-support-vector-machine-15-638.jpg?cb=1459853447" alt="Alt text"></p>
 <h4 id="松弛变量Slack-Variable"><a href="#松弛变量Slack-Variable" class="headerlink" title="松弛变量Slack Variable"></a>松弛变量Slack Variable</h4><p>为了解决这个问题，我们引入一个松弛变量$\xi\ge 0$ ，使函数间隔加上松弛变量大于等于1。这样约束条件变为</p>
 <script type="math/tex; mode=display">y_i(w^Tx+b) \ge 1 - \xi_i</script><p>松弛变量的引入常常是为了便于在更大的可行域内求解。若为0，则收敛到原有状态，若大于零，则约束松弛。即上述线性可分支持向量机是线性支持向量机的一种特例：松弛变量$\xi=0$</p>
@@ -620,7 +620,7 @@ SVM有哪几类？各自解决的问题是什么？
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-count">6</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -628,7 +628,7 @@ SVM有哪几类？各自解决的问题是什么？
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">3</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -637,7 +637,7 @@ SVM有哪几类？各自解决的问题是什么？
           
             <div class="site-state-item site-state-tags">
               
-                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-count">21</span>
                 <span class="site-state-item-name">标签</span>
               
             </div>

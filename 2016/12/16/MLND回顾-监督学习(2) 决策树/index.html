@@ -109,7 +109,7 @@
 <meta property="og:image" content="http://ww1.sinaimg.cn/large/006tNbRwgw1fasn753zfnj30bf02qq33.jpg">
 <meta property="og:image" content="http://ww1.sinaimg.cn/large/006tNbRwgw1fasnxgt475j30c908ttaa.jpg">
 <meta property="og:image" content="http://ww1.sinaimg.cn/large/006tNbRwgw1fasy7en2raj30em0d2758.jpg">
-<meta property="og:updated_time" content="2016-12-19T02:38:30.000Z">
+<meta property="og:updated_time" content="2016-12-22T06:22:49.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="监督学习(2) 决策树Decision Tree">
 <meta name="twitter:description" content="导语决策树是一种基本的分类与回归方法。很多高级一点机器方法都用到了决策树，而且决策树很直观容易理解，很适合初学者入门。但是正是因为容易理解，反而容易忽视其背后的统计学概率论等算法基础。因此此篇就总结并讲解了分类决策树的特征选择依据和构建和3种常见决策树的异同。希望读者阅读后对决策树有更深入的数学理解。
@@ -484,8 +484,8 @@
 <h4 id="基尼指数-Gini-Index"><a href="#基尼指数-Gini-Index" class="headerlink" title="基尼指数 Gini Index"></a>基尼指数 Gini Index</h4><p>基尼指数和熵，信息增益等都没有公式上的关联，但是效果和熵类似。</p>
 <h5 id="定义-4"><a href="#定义-4" class="headerlink" title="定义"></a>定义</h5><p>分类问题中，假设有K个类，样本点属于第k类的概率为$p_k$ ，则概率分布的基尼指数定义为</p>
 <script type="math/tex; mode=display">Gini(p) = \sum_{k=1}^K p_k(1-p_k) = 1 - \sum_{k=1}^K p_k^2</script><p>对于给定的样本集合D，其基尼指数为</p>
-<script type="math/tex; mode=display">Gini(D) = 1 - \sum_{k=1}^K(\frac{|C_k|}{|D|})^2</script><p>其中，$C_k$ 是D中属于k类的样本子集。</p>
-<p>如果样本集合D根据特征A是否可能取某一可能值a被分割成$D_1$ 和$D_2$两部分，即</p>
+<script type="math/tex; mode=display">Gini(D) = 1 - \sum_{k=1}^K(\frac{|D_k|}{|D|})^2</script><p>其中，$D_k$ 是D中属于k类的样本子集。</p>
+<p>如果样本集合D根据特征A是否可能取某一可能值a被分割成$D_1​$ 和$D_2​$两部分，即</p>
 <script type="math/tex; mode=display">D_2 = D - D_1</script><p>在特征A的条件下，集合的D的基尼指数定义为</p>
 <script type="math/tex; mode=display">Gini(D,A)=\frac{|D_1|}{|D|}Gini(D_1) + \frac{|D_2|}{|D|}Gini(D_2)</script><p>和熵类似，基尼指数$Gini(D)$表示集合D的不确定性，基尼指数$Gini(D,A)$表示经$A=a$分割后集合D的不确定性，即基尼指数值越大，样本集合的不确定性也就越大。</p>
 <p><img src="http://ww1.sinaimg.cn/large/006tNbRwgw1fasy7en2raj30em0d2758.jpg" alt="屏幕快照 2016-12-16 21.22.49"></p>
@@ -673,7 +673,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">5</span>
+              <span class="site-state-item-count">6</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -681,7 +681,7 @@
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">3</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -690,7 +690,7 @@
           
             <div class="site-state-item site-state-tags">
               
-                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-count">21</span>
                 <span class="site-state-item-name">标签</span>
               
             </div>
